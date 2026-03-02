@@ -26,7 +26,7 @@ const CreatorBuyChillies = () => {
     <div className="space-y-6">
       <div className="text-center max-w-2xl mx-auto">
         <Badge className="mb-4 bg-accent/10 text-accent border-accent/20 hover:bg-accent/10">🌶️ Chillies Store</Badge>
-        <h2 className="text-3xl font-bold mb-2">Boost Your Priority</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-2">Boost Your Priority</h2>
         <p className="text-muted-foreground">Buy Chillies to get verified badges, priority placement, and higher chances of landing campaigns.</p>
         <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2">
           <Flame className="h-4 w-4 text-accent" />
@@ -34,7 +34,7 @@ const CreatorBuyChillies = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-5 max-w-5xl mx-auto">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 max-w-5xl mx-auto">
         {packages.map((p) => (
           <Card key={p.chillies} className={`relative hover:shadow-lg transition-all ${p.popular ? 'border-primary shadow-lg scale-105' : 'border-border/50'}`}>
             {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2"><Badge className="gradient-primary text-primary-foreground">Best Value</Badge></div>}
@@ -61,12 +61,13 @@ const CreatorBuyChillies = () => {
       <Card className="max-w-4xl mx-auto">
         <CardHeader><CardTitle className="text-base">Chillies Benefits Comparison</CardTitle></CardHeader>
         <CardContent>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[320px]">
             <thead>
               <tr className="border-b border-border text-left text-muted-foreground">
-                <th className="pb-3 font-medium">Benefit</th>
-                <th className="pb-3 font-medium text-center">Free</th>
-                <th className="pb-3 font-medium text-center">With Chillies</th>
+                <th className="pb-3 font-medium text-xs sm:text-sm">Benefit</th>
+                <th className="pb-3 font-medium text-center text-xs sm:text-sm">Free</th>
+                <th className="pb-3 font-medium text-center text-xs sm:text-sm">With Chillies</th>
               </tr>
             </thead>
             <tbody>
@@ -86,6 +87,7 @@ const CreatorBuyChillies = () => {
               ))}
             </tbody>
           </table>
+          </div>
         </CardContent>
       </Card>
 
