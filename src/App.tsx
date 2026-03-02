@@ -39,7 +39,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/about" element={<About />} />
+          {/* About is now a section on the homepage */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/brand" element={<BrandDashboard />} />

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import PublicNavbar from "@/components/layout/PublicNavbar";
 import PublicFooter from "@/components/layout/PublicFooter";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Flame, Star, Users, Megaphone, Shield, Zap, TrendingUp, CheckCircle, BarChart3, Globe, Award, Play, Sparkles, Heart, Target } from "lucide-react";
+import { ArrowRight, Flame, Star, Users, Megaphone, Shield, Zap, TrendingUp, CheckCircle, BarChart3, Globe, Award, Play, Sparkles, Heart, Target, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
@@ -54,11 +54,11 @@ const Index = () => {
                     Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <Link to="/about">
+                <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>
                   <Button size="lg" variant="outline" className="rounded-lg px-8 h-13 text-base font-semibold">
                     <Play className="mr-2 h-4 w-4" /> How It Works
                   </Button>
-                </Link>
+                </button>
               </motion.div>
 
               {/* Trust row */}
@@ -328,21 +328,76 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ═══════ STATS ═══════ */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-8 md:grid-cols-4 max-w-4xl mx-auto text-center">
+      {/* ═══════ ABOUT ═══════ */}
+      <section id="about" className="py-24 lg:py-32 scroll-mt-20 relative overflow-hidden">
+        <div className="pointer-events-none absolute top-20 -right-60 h-[500px] w-[500px] rounded-full bg-primary/4 blur-[140px]" />
+        <div className="pointer-events-none absolute bottom-20 -left-40 h-[400px] w-[400px] rounded-full bg-accent/4 blur-[120px]" />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-sm uppercase tracking-widest text-primary font-medium mb-3">About Align</motion.p>
+            <motion.h2 initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.05 }} className="text-3xl lg:text-5xl font-display font-bold mb-5">Built for the Creator Economy</motion.h2>
+            <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+              We believe every creator deserves equal access to opportunities — and every brand deserves quality collaborations. Align makes it happen.
+            </motion.p>
+          </div>
+
+          {/* Vision & Mission */}
+          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto mb-16">
+            <motion.div initial={{ opacity: 0, x: -25 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }}>
+              <div className="rounded-xl border border-primary/15 bg-card p-8 h-full hover-lift group">
+                <div className="h-14 w-14 rounded-xl gradient-primary flex items-center justify-center mb-5 shadow-md group-hover:shadow-lg transition-shadow">
+                  <Target className="h-7 w-7 text-primary-foreground" />
+                </div>
+                <h3 className="text-xl font-display font-bold mb-3">Our Vision</h3>
+                <p className="text-muted-foreground leading-relaxed">To be the world's most trusted collaboration platform where brands and creators align seamlessly, powered by transparent merit-based systems.</p>
+              </div>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, x: 25 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }}>
+              <div className="rounded-xl border border-accent/15 bg-card p-8 h-full hover-lift group">
+                <div className="h-14 w-14 rounded-xl bg-accent flex items-center justify-center mb-5 shadow-md group-hover:shadow-lg transition-shadow">
+                  <Eye className="h-7 w-7 text-accent-foreground" />
+                </div>
+                <h3 className="text-xl font-display font-bold mb-3">Our Mission</h3>
+                <p className="text-muted-foreground leading-relaxed">Democratize brand-creator collaborations through our Chillies priority system, RACK scoring, and zero-barrier applications.</p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Why Align Exists */}
+          <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto mb-16">
             {[
-              { value: "12,500+", label: "Active Creators" },
-              { value: "3,200+", label: "Trusted Brands" },
-              { value: "8,400+", label: "Campaigns Completed" },
-              { value: "$2.4M+", label: "Paid to Creators" },
-            ].map((s, i) => (
-              <motion.div key={s.label} initial={{ opacity: 0, y: 15, scale: 0.95 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: i * 0.08, duration: 0.5 }} viewport={{ once: true }}>
-                <p className="text-3xl lg:text-4xl font-display font-extrabold gradient-text mb-1">{s.value}</p>
-                <p className="text-sm text-muted-foreground">{s.label}</p>
+              { icon: Heart, title: "Fair Access", desc: "Every creator can apply for free. No paywalls, no gatekeeping. Chillies only boost priority — they never block access.", color: "text-destructive" },
+              { icon: Shield, title: "Trust & Transparency", desc: "Our RACK scoring system ensures quality. Brands see real metrics. Creators build real reputations.", color: "text-primary" },
+              { icon: Users, title: "Community First", desc: "Align is built by creators, for creators and brands. We reinvest in the community through free Chillies promotions.", color: "text-accent" },
+            ].map((item, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1, duration: 0.5 }} viewport={{ once: true }}>
+                <div className="rounded-xl border border-border/50 bg-card p-7 h-full hover-lift">
+                  <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
+                    <item.icon className={`h-6 w-6 ${item.color}`} />
+                  </div>
+                  <h3 className="text-base font-bold mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                </div>
               </motion.div>
             ))}
+          </div>
+
+          {/* Stats */}
+          <div className="rounded-2xl border border-border/50 bg-card p-10 lg:p-14 max-w-4xl mx-auto">
+            <div className="grid gap-8 md:grid-cols-4 text-center">
+              {[
+                { value: "12,500+", label: "Active Creators" },
+                { value: "3,200+", label: "Trusted Brands" },
+                { value: "8,400+", label: "Campaigns Completed" },
+                { value: "$2.4M+", label: "Paid to Creators" },
+              ].map((s, i) => (
+                <motion.div key={s.label} initial={{ opacity: 0, y: 15, scale: 0.95 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: i * 0.08, duration: 0.5 }} viewport={{ once: true }}>
+                  <p className="text-3xl lg:text-4xl font-display font-extrabold gradient-text mb-1">{s.value}</p>
+                  <p className="text-sm text-muted-foreground">{s.label}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

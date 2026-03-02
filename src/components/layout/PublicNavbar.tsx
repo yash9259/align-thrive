@@ -26,6 +26,7 @@ const PublicNavbar = () => {
     { id: "how-it-works", label: "How It Works" },
     { id: "features", label: "Features" },
     { id: "testimonials", label: "Testimonials" },
+    { id: "about", label: "About" },
   ];
 
   return (
@@ -53,9 +54,6 @@ const PublicNavbar = () => {
               {link.label}
             </button>
           ))}
-          <Link to="/about" className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/about') ? 'text-primary' : 'text-muted-foreground'}`}>
-            About
-          </Link>
         </div>
 
         {/* Desktop CTA */}
@@ -105,13 +103,6 @@ const PublicNavbar = () => {
                   {link.label}
                 </button>
               ))}
-              <Link
-                to="/about"
-                onClick={() => setMobileOpen(false)}
-                className={`text-sm font-medium py-2.5 px-3 rounded-lg transition-colors ${isActive('/about') ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
-              >
-                About
-              </Link>
               <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-border/50">
                 <Link to="/login" onClick={() => setMobileOpen(false)}>
                   <Button variant="outline" size="sm" className="w-full">Sign In</Button>
