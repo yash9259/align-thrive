@@ -18,6 +18,7 @@ import CreatorProjects from "./pages/creator/CreatorProjects";
 import CreatorProjectDetails from "./pages/creator/CreatorProjectDetails";
 import CreatorBuyChillies from "./pages/creator/CreatorBuyChillies";
 import CreatorChilliesPayment from "./pages/creator/CreatorChilliesPayment";
+import CreatorPaymentHistory from "./pages/creator/CreatorPaymentHistory";
 import CreatorMessages from "./pages/creator/CreatorMessages";
 import CreatorProfile from "./pages/creator/CreatorProfile";
 import CreatorUploadContent from "./pages/creator/CreatorUploadContent";
@@ -56,6 +57,7 @@ const App = () => (
           <Route path="/creator/invitations" element={<CreatorInvitations />} />
           <Route path="/creator/buy-chillies" element={<CreatorBuyChillies />} />
           <Route path="/creator/buy-chillies/payment" element={<CreatorChilliesPayment />} />
+          <Route path="/creator/payment-history" element={<CreatorPaymentHistory />} />
           <Route path="/creator/messages" element={<CreatorMessages />} />
           <Route path="/creator/profile" element={<CreatorProfile />} />
           <Route path="/creator/upload" element={<CreatorUploadContent />} />

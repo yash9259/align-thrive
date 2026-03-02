@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Flame, CreditCard, Shield, ArrowLeft, CheckCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Flame, CreditCard, Shield, ArrowLeft, CheckCircle, Smartphone, Wallet } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,7 +25,10 @@ const CreatorChilliesPayment = () => {
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
+  const [upiId, setUpiId] = useState("");
+  const [paypalEmail, setPaypalEmail] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("card");
 
   const formatCardNumber = (value: string) => {
     const cleaned = value.replace(/\D/g, "").slice(0, 16);
@@ -38,8 +42,16 @@ const CreatorChilliesPayment = () => {
   };
 
   const handlePayment = () => {
-    if (!cardName || !cardNumber || !expiry || !cvv) {
-      toast({ title: "Missing fields", description: "Please fill all payment details.", variant: "destructive" });
+    if (paymentMethod === "card" && (!cardName || !cardNumber || !expiry || !cvv)) {
+      toast({ title: "Missing fields", description: "Please fill all card details.", variant: "destructive" });
+      return;
+    }
+    if (paymentMethod === "upi" && !upiId) {
+      toast({ title: "Missing UPI ID", description: "Please enter your UPI ID.", variant: "destructive" });
+      return;
+    }
+    if (paymentMethod === "paypal" && !paypalEmail) {
+      toast({ title: "Missing email", description: "Please enter your PayPal email.", variant: "destructive" });
       return;
     }
     setProcessing(true);
@@ -53,7 +65,6 @@ const CreatorChilliesPayment = () => {
   return (
     <DashboardLayout sidebar={<CreatorSidebar />} title="Payment" userInitials="SJ">
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Back button */}
         <Button variant="ghost" size="sm" onClick={() => navigate("/creator/buy-chillies")} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> Back to Chillies Store
         </Button>
@@ -98,7 +109,7 @@ const CreatorChilliesPayment = () => {
           </CardContent>
         </Card>
 
-        {/* Payment Form */}
+        {/* Payment Form with Tabs */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
@@ -106,33 +117,79 @@ const CreatorChilliesPayment = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex gap-2 mb-2">
-              <Badge variant="outline" className="text-xs">Visa</Badge>
-              <Badge variant="outline" className="text-xs">Mastercard</Badge>
-              <Badge variant="outline" className="text-xs">UPI</Badge>
-              <Badge variant="outline" className="text-xs">PayPal</Badge>
-            </div>
+            <Tabs value={paymentMethod} onValueChange={setPaymentMethod} className="w-full">
+              <TabsList className="w-full grid grid-cols-3">
+                <TabsTrigger value="card" className="gap-2 text-xs sm:text-sm">
+                  <CreditCard className="h-4 w-4" /> Card
+                </TabsTrigger>
+                <TabsTrigger value="upi" className="gap-2 text-xs sm:text-sm">
+                  <Smartphone className="h-4 w-4" /> UPI
+                </TabsTrigger>
+                <TabsTrigger value="paypal" className="gap-2 text-xs sm:text-sm">
+                  <Wallet className="h-4 w-4" /> PayPal
+                </TabsTrigger>
+              </TabsList>
 
-            <div className="space-y-2">
-              <Label htmlFor="cardName">Cardholder Name</Label>
-              <Input id="cardName" placeholder="John Doe" value={cardName} onChange={(e) => setCardName(e.target.value)} />
-            </div>
+              {/* Card Tab */}
+              <TabsContent value="card" className="space-y-4 mt-4">
+                <div className="flex gap-2 mb-2">
+                  <Badge variant="outline" className="text-xs">Visa</Badge>
+                  <Badge variant="outline" className="text-xs">Mastercard</Badge>
+                  <Badge variant="outline" className="text-xs">Amex</Badge>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cardName">Cardholder Name</Label>
+                  <Input id="cardName" placeholder="John Doe" value={cardName} onChange={(e) => setCardName(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cardNumber">Card Number</Label>
+                  <Input id="cardNumber" placeholder="1234 5678 9012 3456" value={cardNumber} onChange={(e) => setCardNumber(formatCardNumber(e.target.value))} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="expiry">Expiry Date</Label>
+                    <Input id="expiry" placeholder="MM/YY" value={expiry} onChange={(e) => setExpiry(formatExpiry(e.target.value))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cvv">CVV</Label>
+                    <Input id="cvv" placeholder="123" maxLength={4} value={cvv} onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))} />
+                  </div>
+                </div>
+              </TabsContent>
 
-            <div className="space-y-2">
-              <Label htmlFor="cardNumber">Card Number</Label>
-              <Input id="cardNumber" placeholder="1234 5678 9012 3456" value={cardNumber} onChange={(e) => setCardNumber(formatCardNumber(e.target.value))} />
-            </div>
+              {/* UPI Tab */}
+              <TabsContent value="upi" className="space-y-4 mt-4">
+                <div className="rounded-lg border border-border/50 bg-muted/30 p-4 text-center">
+                  <Smartphone className="h-10 w-10 text-primary mx-auto mb-3" />
+                  <p className="text-sm font-medium mb-1">Pay with UPI</p>
+                  <p className="text-xs text-muted-foreground mb-4">Enter your UPI ID to make a secure payment</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="upiId">UPI ID</Label>
+                  <Input id="upiId" placeholder="yourname@upi" value={upiId} onChange={(e) => setUpiId(e.target.value)} />
+                  <p className="text-xs text-muted-foreground">Example: name@oksbi, name@paytm, name@gpay</p>
+                </div>
+                <div className="flex gap-2">
+                  <Badge variant="outline" className="text-xs">Google Pay</Badge>
+                  <Badge variant="outline" className="text-xs">PhonePe</Badge>
+                  <Badge variant="outline" className="text-xs">Paytm</Badge>
+                  <Badge variant="outline" className="text-xs">BHIM</Badge>
+                </div>
+              </TabsContent>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="expiry">Expiry Date</Label>
-                <Input id="expiry" placeholder="MM/YY" value={expiry} onChange={(e) => setExpiry(formatExpiry(e.target.value))} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cvv">CVV</Label>
-                <Input id="cvv" placeholder="123" maxLength={4} value={cvv} onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))} />
-              </div>
-            </div>
+              {/* PayPal Tab */}
+              <TabsContent value="paypal" className="space-y-4 mt-4">
+                <div className="rounded-lg border border-border/50 bg-muted/30 p-4 text-center">
+                  <Wallet className="h-10 w-10 text-primary mx-auto mb-3" />
+                  <p className="text-sm font-medium mb-1">Pay with PayPal</p>
+                  <p className="text-xs text-muted-foreground mb-4">You'll be redirected to PayPal to complete your payment</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="paypalEmail">PayPal Email</Label>
+                  <Input id="paypalEmail" type="email" placeholder="you@example.com" value={paypalEmail} onChange={(e) => setPaypalEmail(e.target.value)} />
+                </div>
+              </TabsContent>
+            </Tabs>
 
             <Separator className="my-2" />
 
