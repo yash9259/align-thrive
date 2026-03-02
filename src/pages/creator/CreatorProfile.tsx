@@ -3,7 +3,7 @@ import CreatorSidebar from "@/components/layout/CreatorSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Flame, Star, Shield, Instagram, Youtube, MapPin, Calendar, Briefcase } from "lucide-react";
+import { Flame, Star, Shield, Instagram, Youtube, MapPin, Calendar, Briefcase, ExternalLink } from "lucide-react";
 
 const pastCollabs = [
   { brand: "TechFlow Inc.", campaign: "SaaS Product Launch", earned: "$1,200", date: "Feb 2026" },
@@ -30,10 +30,28 @@ const CreatorProfile = () => (
               </div>
               <p className="text-sm text-muted-foreground mb-4">Lifestyle & tech content creator passionate about authentic storytelling. 3+ years creating engaging content for brands across Instagram and YouTube.</p>
               <div className="flex flex-wrap gap-3 sm:gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1"><Instagram className="h-4 w-4 shrink-0" />@sarahjcreates</span>
-                <span className="flex items-center gap-1"><Youtube className="h-4 w-4 shrink-0" />Sarah Johnson</span>
                 <span className="flex items-center gap-1"><MapPin className="h-4 w-4 shrink-0" />Los Angeles, CA</span>
                 <span className="flex items-center gap-1"><Calendar className="h-4 w-4 shrink-0" />Joined Sep 2024</span>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <a href="https://instagram.com/sarahjcreates" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-pink-500/10 text-pink-600 px-3 py-1.5 text-xs font-medium hover:bg-pink-500/20 transition-colors">
+                  <Instagram className="h-3.5 w-3.5" />Instagram
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <a href="https://youtube.com/@sarahjohnson" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 text-red-600 px-3 py-1.5 text-xs font-medium hover:bg-red-500/20 transition-colors">
+                  <Youtube className="h-3.5 w-3.5" />YouTube
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <a href="https://tiktok.com/@sarahjcreates" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-foreground/10 text-foreground px-3 py-1.5 text-xs font-medium hover:bg-foreground/20 transition-colors">
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.97a8.35 8.35 0 0 0 4.77 1.52V7.04a4.84 4.84 0 0 1-1.01-.35z"/></svg>
+                  TikTok
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <a href="https://snapchat.com/add/sarahjcreates" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-yellow-500/10 text-yellow-600 px-3 py-1.5 text-xs font-medium hover:bg-yellow-500/20 transition-colors">
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm5.41 7.15-1.76 8.28a.74.74 0 0 1-1.06.46l-2.69-2-1.42 1.37a.5.5 0 0 1-.47.13l.21-3.06 5.53-5a.24.24 0 0 0-.29-.38L8.69 13.5l-2.63-.82a.49.49 0 0 1 0-.94l10.25-3.94a.74.74 0 0 1 1.1.55z"/></svg>
+                  Snapchat
+                  <ExternalLink className="h-3 w-3" />
+                </a>
               </div>
             </div>
             <Button variant="outline" className="w-full sm:w-auto shrink-0">Edit Profile</Button>
