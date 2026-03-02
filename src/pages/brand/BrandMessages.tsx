@@ -138,7 +138,7 @@ const BrandMessages = () => {
 
   return (
     <DashboardLayout sidebar={<BrandSidebar />} title="Messages" userInitials="TF">
-      <Card className="h-[calc(100vh-8rem)]">
+      <Card className="h-[calc(100vh-8rem)] overflow-hidden">
         <div className="flex h-full">
           {/* Conversation list */}
           <div className={`${showChat ? "hidden md:flex" : "flex"} w-full md:w-80 border-r border-border flex-col`}>
