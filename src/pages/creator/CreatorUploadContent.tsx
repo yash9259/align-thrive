@@ -25,28 +25,28 @@ const CreatorUploadContent = () => (
   <DashboardLayout sidebar={<CreatorSidebar />} title="Upload Content" userInitials="SJ">
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Upload Content & Earn Chillies</h2>
+        <h2 className="text-xl sm:text-2xl font-bold">Upload Content & Earn Chillies</h2>
         <p className="text-sm text-muted-foreground">Share posts or videos about Align to earn free Chillies and verification badges</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
         <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
-          <CardContent className="p-6 text-center">
+          <CardContent className="p-5 sm:p-6 text-center">
             <Image className="h-10 w-10 text-accent mx-auto mb-3" />
             <h3 className="font-semibold mb-1">📸 Image Post</h3>
             <p className="text-sm text-muted-foreground mb-2">Post about Align on social media</p>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
               <Badge className="bg-accent/10 text-accent">🌶️ 10 Chillies</Badge>
               <Badge className="bg-success/10 text-success">15-day badge</Badge>
             </div>
           </CardContent>
         </Card>
         <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-          <CardContent className="p-6 text-center">
+          <CardContent className="p-5 sm:p-6 text-center">
             <Video className="h-10 w-10 text-primary mx-auto mb-3" />
             <h3 className="font-semibold mb-1">🎬 Video/Reel Post</h3>
             <p className="text-sm text-muted-foreground mb-2">Create a video about Align</p>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
               <Badge className="bg-accent/10 text-accent">🌶️ 50 Chillies</Badge>
               <Badge className="bg-success/10 text-success">50-day badge</Badge>
             </div>
@@ -79,7 +79,7 @@ const CreatorUploadContent = () => (
             <Label>Description</Label>
             <Textarea defaultValue="A detailed review of how Align helped me land premium brand collaborations..." rows={3} />
           </div>
-          <div className="rounded-lg border-2 border-dashed border-border p-8 text-center">
+          <div className="rounded-lg border-2 border-dashed border-border p-6 sm:p-8 text-center">
             <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
             <p className="text-sm font-medium">Upload screenshot or media file</p>
             <p className="text-xs text-muted-foreground">PNG, JPG, MP4 up to 50MB</p>
@@ -96,16 +96,16 @@ const CreatorUploadContent = () => (
         <CardContent>
           <div className="space-y-3">
             {uploadHistory.map((u) => (
-              <div key={u.title} className="flex items-center justify-between rounded-lg border border-border/50 p-4">
-                <div className="flex items-center gap-3">
-                  {u.type === "Video" ? <Video className="h-5 w-5 text-primary" /> : <Image className="h-5 w-5 text-accent" />}
-                  <div>
-                    <p className="font-medium text-sm">{u.title}</p>
+              <div key={u.title} className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-border/50 p-3 sm:p-4 gap-2 sm:gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  {u.type === "Video" ? <Video className="h-5 w-5 text-primary shrink-0" /> : <Image className="h-5 w-5 text-accent shrink-0" />}
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">{u.title}</p>
                     <p className="text-xs text-muted-foreground">{u.date}</p>
                     {u.reason && <p className="text-xs text-destructive mt-0.5">{u.reason}</p>}
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap pl-8 sm:pl-0">
                   {u.chillies > 0 && <span className="text-xs text-accent font-medium">🌶️ {u.chillies}</span>}
                   {u.badge !== "—" && <span className="text-xs text-success">{u.badge}</span>}
                   <Badge variant="secondary" className={statusColors[u.status]}>{u.status}</Badge>

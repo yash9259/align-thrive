@@ -24,12 +24,12 @@ const statusColors: Record<string, string> = {
 const BrandCampaigns = () => (
   <DashboardLayout sidebar={<BrandSidebar />} title="Campaigns" userInitials="TF">
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold">Your Campaigns</h2>
+          <h2 className="text-xl sm:text-2xl font-bold">Your Campaigns</h2>
           <p className="text-sm text-muted-foreground">Manage and track all your campaigns</p>
         </div>
-        <Button className="gradient-primary text-primary-foreground">+ New Campaign</Button>
+        <Button className="gradient-primary text-primary-foreground w-full sm:w-auto">+ New Campaign</Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

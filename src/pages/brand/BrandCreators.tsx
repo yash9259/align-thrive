@@ -44,42 +44,43 @@ const BrandCreators = () => {
   return (
     <DashboardLayout sidebar={<BrandSidebar />} title="Discover Creators" userInitials="TF">
       <div className="space-y-6">
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Search creators by name, niche..." className="pl-9" />
           </div>
-          <Select defaultValue="all">
-            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="lifestyle">Lifestyle</SelectItem>
-              <SelectItem value="tech">Tech</SelectItem>
-              <SelectItem value="fashion">Fashion</SelectItem>
-              <SelectItem value="fitness">Fitness</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select defaultValue="all">
-            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Followers</SelectItem>
-              <SelectItem value="10k">10K+</SelectItem>
-              <SelectItem value="50k">50K+</SelectItem>
-              <SelectItem value="100k">100K+</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select defaultValue="rack">
-            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="rack">RACK Score</SelectItem>
-              <SelectItem value="followers">Followers</SelectItem>
-              <SelectItem value="engagement">Engagement</SelectItem>
-              
-            </SelectContent>
-          </Select>
+          <div className="grid grid-cols-3 gap-2 sm:flex sm:gap-4">
+            <Select defaultValue="all">
+              <SelectTrigger className="w-full sm:w-36"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="lifestyle">Lifestyle</SelectItem>
+                <SelectItem value="tech">Tech</SelectItem>
+                <SelectItem value="fashion">Fashion</SelectItem>
+                <SelectItem value="fitness">Fitness</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select defaultValue="all">
+              <SelectTrigger className="w-full sm:w-36"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Followers</SelectItem>
+                <SelectItem value="10k">10K+</SelectItem>
+                <SelectItem value="50k">50K+</SelectItem>
+                <SelectItem value="100k">100K+</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select defaultValue="rack">
+              <SelectTrigger className="w-full sm:w-36"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="rack">RACK Score</SelectItem>
+                <SelectItem value="followers">Followers</SelectItem>
+                <SelectItem value="engagement">Engagement</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {creators.map((c) => {
             const PlatformIcon = platformIcon[c.platform] || Instagram;
             const avg = getRackAvg(c.rack);

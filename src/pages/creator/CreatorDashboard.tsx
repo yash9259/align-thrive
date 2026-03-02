@@ -26,45 +26,45 @@ const statusColors: Record<string, string> = {
 const CreatorDashboard = () => (
   <DashboardLayout sidebar={<CreatorSidebar />} title="Dashboard" userInitials="SJ">
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <Flame className="h-5 w-5 text-accent mb-2" />
-            <p className="text-3xl font-bold text-accent">245</p>
+            <p className="text-2xl sm:text-3xl font-bold text-accent">245</p>
             <p className="text-xs text-muted-foreground">Chillies Balance</p>
             <p className="mt-1 text-xs text-success">+50 this week</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between mb-2">
               <Shield className="h-5 w-5 text-success" />
               <Badge className="bg-success/10 text-success text-[10px]">Active</Badge>
             </div>
-            <p className="text-lg font-bold">Verified ✓</p>
+            <p className="text-base sm:text-lg font-bold">Verified ✓</p>
             <p className="text-xs text-muted-foreground">Badge expires in 28 days</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <Briefcase className="h-5 w-5 text-primary mb-2" />
-            <p className="text-3xl font-bold">8</p>
+            <p className="text-2xl sm:text-3xl font-bold">8</p>
             <p className="text-xs text-muted-foreground">Active Bids</p>
             <p className="mt-1 text-xs text-success">3 shortlisted</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <DollarSign className="h-5 w-5 text-success mb-2" />
-            <p className="text-3xl font-bold">$7,270</p>
+            <p className="text-2xl sm:text-3xl font-bold">$7,270</p>
             <p className="text-xs text-muted-foreground">Total Earnings</p>
-            <p className="mt-1 text-xs text-success flex items-center gap-0.5"><ArrowUpRight className="h-3 w-3" />+18% this month</p>
+            <p className="mt-1 text-xs text-success flex items-center gap-0.5"><ArrowUpRight className="h-3 w-3" />+18%</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-5">
-        <Card className="md:col-span-3">
+      <div className="grid gap-6 lg:grid-cols-5">
+        <Card className="lg:col-span-3">
           <CardHeader><CardTitle className="text-base">Earnings Overview</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -79,13 +79,13 @@ const CreatorDashboard = () => (
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader><CardTitle className="text-base">RACK Score</CardTitle></CardHeader>
           <CardContent>
             <div className="flex items-center justify-center mb-4">
-              <div className="relative flex h-32 w-32 items-center justify-center rounded-full border-4 border-primary">
+              <div className="relative flex h-24 w-24 sm:h-32 sm:w-32 items-center justify-center rounded-full border-4 border-primary">
                 <div className="text-center">
-                  <p className="text-3xl font-bold">92</p>
+                  <p className="text-2xl sm:text-3xl font-bold">92</p>
                   <p className="text-xs text-muted-foreground">/ 100</p>
                 </div>
               </div>
@@ -116,12 +116,12 @@ const CreatorDashboard = () => (
         <CardContent>
           <div className="space-y-3">
             {activeBids.map((b) => (
-              <div key={b.campaign} className="flex items-center justify-between rounded-lg border border-border/50 p-4">
-                <div>
-                  <p className="font-medium">{b.campaign}</p>
+              <div key={b.campaign} className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-border/50 p-3 sm:p-4 gap-2 sm:gap-4">
+                <div className="min-w-0">
+                  <p className="font-medium text-sm">{b.campaign}</p>
                   <p className="text-xs text-muted-foreground">{b.brand}</p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 flex-wrap">
                   <span className="text-xs text-accent flex items-center gap-0.5"><Flame className="h-3 w-3" />{b.chillies} used</span>
                   <span className="font-bold text-success">{b.bid}</span>
                   <Badge variant="secondary" className={statusColors[b.status]}>{b.status}</Badge>
