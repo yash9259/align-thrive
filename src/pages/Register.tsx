@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Flame, Info, Eye, EyeOff } from "lucide-react";
+import { Flame, Info, Eye, EyeOff, Instagram, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -34,7 +34,10 @@ const creatorSchema = z.object({
   phone: z.string().trim().min(7, "Phone number is required").max(20),
   promotionFee: z.string().trim().min(1, "Enter your per promotion fee"),
   platforms: z.array(z.string()).min(1, "Select at least one platform"),
-  channelLinks: z.string().trim().min(3, "Enter at least one link"),
+  instagramLink: z.string().trim().optional(),
+  youtubeLink: z.string().trim().optional(),
+  tiktokLink: z.string().trim().optional(),
+  snapchatLink: z.string().trim().optional(),
   niche: z.string().trim().min(2, "Enter your content niche"),
   language: z.string().trim().min(2, "Enter your content language"),
   followers: z.string().min(1, "Select follower range"),
@@ -44,6 +47,11 @@ const creatorSchema = z.object({
 }).refine((d) => d.password === d.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
+}).refine((d) => {
+  return !!(d.instagramLink || d.youtubeLink || d.tiktokLink || d.snapchatLink);
+}, {
+  message: "Add at least one social media link",
+  path: ["instagramLink"],
 });
 
 const brandSchema = z.object({
@@ -69,7 +77,8 @@ const Register = () => {
   const [creator, setCreator] = useState({
     fullName: "", email: "", password: "", confirmPassword: "",
     address: "", phone: "", promotionFee: "", platforms: [] as string[],
-    channelLinks: "", niche: "", language: "", followers: "",
+    instagramLink: "", youtubeLink: "", tiktokLink: "", snapchatLink: "",
+    niche: "", language: "", followers: "",
     nationality: "", audienceNationality: "", description: "",
   });
   const [creatorErrors, setCreatorErrors] = useState<Record<string, string>>({});
@@ -214,9 +223,34 @@ const Register = () => {
                 </div>
 
                 <div>
-                  <Label>Links to Channel / Page / Handle</Label>
-                  <Textarea placeholder="Paste your social media links here (one per line)" rows={3} value={creator.channelLinks} onChange={(e) => updateCreator("channelLinks", e.target.value)} />
-                  <FieldError msg={creatorErrors.channelLinks} />
+                  <Label className="mb-2 block">Social Media Links</Label>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Instagram className="h-4 w-4 text-pink-500 shrink-0" />
+                        <Input placeholder="https://instagram.com/yourhandle" value={creator.instagramLink} onChange={(e) => updateCreator("instagramLink", e.target.value)} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Youtube className="h-4 w-4 text-red-500 shrink-0" />
+                        <Input placeholder="https://youtube.com/@yourchannel" value={creator.youtubeLink} onChange={(e) => updateCreator("youtubeLink", e.target.value)} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.97a8.35 8.35 0 0 0 4.77 1.52V7.04a4.84 4.84 0 0 1-1.01-.35z"/></svg>
+                        <Input placeholder="https://tiktok.com/@yourhandle" value={creator.tiktokLink} onChange={(e) => updateCreator("tiktokLink", e.target.value)} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm5.41 7.15-1.76 8.28a.74.74 0 0 1-1.06.46l-2.69-2-1.42 1.37a.5.5 0 0 1-.47.13l.21-3.06 5.53-5a.24.24 0 0 0-.29-.38L8.69 13.5l-2.63-.82a.49.49 0 0 1 0-.94l10.25-3.94a.74.74 0 0 1 1.1.55z"/></svg>
+                        <Input placeholder="https://snapchat.com/add/yourusername" value={creator.snapchatLink} onChange={(e) => updateCreator("snapchatLink", e.target.value)} />
+                      </div>
+                    </div>
+                  </div>
+                  <FieldError msg={creatorErrors.instagramLink} />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
