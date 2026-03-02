@@ -262,10 +262,6 @@ const Register = () => {
                   <FieldError msg={creatorErrors.description} />
                 </div>
 
-                <div className="rounded-lg bg-success/10 p-3 flex items-start gap-2">
-                  <Info className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                  <p className="text-xs text-muted-foreground">Free applications are auto-approved. Chillies are optional and give you priority & verification badges.</p>
-                </div>
 
                 <Button className="w-full gradient-primary text-primary-foreground h-11 text-sm font-semibold" onClick={handleCreatorSubmit}>
                   Create Creator Account
