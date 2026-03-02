@@ -33,7 +33,7 @@ const statusColors: Record<string, string> = {
 const BrandDashboard = () => (
   <DashboardLayout sidebar={<BrandSidebar />} title="Dashboard" userInitials="TF">
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         {[
           { label: "Active Campaigns", value: "12", icon: Megaphone, change: "+3 this month", color: "text-primary" },
           { label: "Total Applicants", value: "284", icon: Users, change: "+48 this week", color: "text-accent" },

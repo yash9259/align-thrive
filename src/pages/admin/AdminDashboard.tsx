@@ -18,7 +18,7 @@ const userGrowth = [
 const AdminDashboard = () => (
   <DashboardLayout sidebar={<AdminSidebar />} title="Admin Dashboard" userInitials="AD">
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         {[
           { label: "Total Brands", value: "3,248", icon: Users, change: "+124 this month", color: "text-primary" },
           { label: "Total Creators", value: "12,584", icon: Users, change: "+892 this month", color: "text-accent" },
