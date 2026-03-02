@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Flame, Search, Shield, Instagram, Youtube, Twitter } from "lucide-react";
+import { Search, Shield, Instagram, Youtube, Twitter } from "lucide-react";
 
 interface Creator {
   name: string;
@@ -74,7 +74,7 @@ const BrandCreators = () => {
               <SelectItem value="rack">RACK Score</SelectItem>
               <SelectItem value="followers">Followers</SelectItem>
               <SelectItem value="engagement">Engagement</SelectItem>
-              <SelectItem value="chillies">Chillies</SelectItem>
+              
             </SelectContent>
           </Select>
         </div>
@@ -132,11 +132,8 @@ const BrandCreators = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="flex items-center gap-1 text-xs text-accent font-medium">
-                      <Flame className="h-3 w-3" />{c.chillies} Chillies
-                    </span>
-                  </div>
+
+
 
                   <Button size="sm" className="w-full gradient-primary text-primary-foreground">Invite to Campaign</Button>
                 </CardContent>
