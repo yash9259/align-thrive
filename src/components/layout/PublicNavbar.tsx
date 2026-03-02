@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Flame, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const PublicNavbar = () => {
@@ -9,10 +9,23 @@ const PublicNavbar = () => {
   const isActive = (path: string) => location.pathname === path;
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navLinks = [
-    { to: "/", label: "Home" },
-    { to: "/about", label: "About" },
-    { to: "/login", label: "Login" },
+  const scrollToSection = useCallback((id: string) => {
+    setMobileOpen(false);
+    if (location.pathname !== "/") {
+      // Navigate home first, then scroll after render
+      window.location.href = `/#${id}`;
+      return;
+    }
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [location.pathname]);
+
+  const sectionLinks = [
+    { id: "how-it-works", label: "How It Works" },
+    { id: "features", label: "Features" },
+    { id: "testimonials", label: "Testimonials" },
   ];
 
   return (
@@ -27,11 +40,21 @@ const PublicNavbar = () => {
 
         {/* Desktop nav */}
         <div className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
-            <Link key={link.to} to={link.to} className={`text-sm font-medium transition-colors hover:text-primary ${isActive(link.to) ? 'text-primary' : 'text-muted-foreground'}`}>
+          <Link to="/" className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>
+            Home
+          </Link>
+          {isActive("/") && sectionLinks.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => scrollToSection(link.id)}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer bg-transparent border-none"
+            >
               {link.label}
-            </Link>
+            </button>
           ))}
+          <Link to="/about" className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/about') ? 'text-primary' : 'text-muted-foreground'}`}>
+            About
+          </Link>
         </div>
 
         <div className="hidden md:flex items-center gap-3">
@@ -63,18 +86,31 @@ const PublicNavbar = () => {
             transition={{ duration: 0.2 }}
             className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-md overflow-hidden"
           >
-            <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-sm font-medium py-2 px-3 rounded-lg transition-colors ${isActive(link.to) ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+            <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
+              <Link
+                to="/"
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm font-medium py-2.5 px-3 rounded-lg transition-colors ${isActive('/') ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+              >
+                Home
+              </Link>
+              {isActive("/") && sectionLinks.map((link) => (
+                <button
+                  key={link.id}
+                  onClick={() => scrollToSection(link.id)}
+                  className="text-sm font-medium py-2.5 px-3 rounded-lg transition-colors text-muted-foreground hover:text-foreground hover:bg-muted text-left"
                 >
                   {link.label}
-                </Link>
+                </button>
               ))}
-              <div className="flex flex-col gap-2 pt-2 border-t border-border/50">
+              <Link
+                to="/about"
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm font-medium py-2.5 px-3 rounded-lg transition-colors ${isActive('/about') ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+              >
+                About
+              </Link>
+              <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-border/50">
                 <Link to="/login" onClick={() => setMobileOpen(false)}>
                   <Button variant="outline" size="sm" className="w-full">Sign In</Button>
                 </Link>
