@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, FolderOpen, Flame, MessageSquare, User, ShoppingCart, Upload, LogOut } from "lucide-react";
+import { LayoutDashboard, FolderOpen, Flame, MessageSquare, User, Upload, LogOut, MailOpen } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
@@ -8,6 +8,7 @@ import {
 const items = [
   { title: "Dashboard", url: "/creator", icon: LayoutDashboard },
   { title: "Projects", url: "/creator/projects", icon: FolderOpen },
+  { title: "Invitations", url: "/creator/invitations", icon: MailOpen },
   { title: "Upload Content", url: "/creator/upload", icon: Upload },
   { title: "Buy Chillies", url: "/creator/buy-chillies", icon: Flame },
   { title: "Messages", url: "/creator/messages", icon: MessageSquare },
