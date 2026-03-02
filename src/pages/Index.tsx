@@ -39,7 +39,7 @@ const Index = () => {
                 </div>
               </motion.div>
 
-              <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }} className="mb-6 font-display text-5xl font-extrabold tracking-tight leading-[1.1] lg:text-6xl xl:text-7xl">
+              <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }} className="mb-6 font-display text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1] lg:text-6xl xl:text-7xl">
                 Where Brands &amp; Creators{" "}
                 <span className="gradient-text">Align</span>
               </motion.h1>
@@ -336,7 +336,7 @@ const Index = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-sm uppercase tracking-widest text-primary font-medium mb-3">About Align</motion.p>
-            <motion.h2 initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.05 }} className="text-3xl lg:text-5xl font-display font-bold mb-5">Built for the Creator Economy</motion.h2>
+            <motion.h2 initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.05 }} className="text-2xl sm:text-3xl lg:text-5xl font-display font-bold mb-5">Built for the Creator Economy</motion.h2>
             <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
               We believe every creator deserves equal access to opportunities — and every brand deserves quality collaborations. Align makes it happen.
             </motion.p>
@@ -384,8 +384,8 @@ const Index = () => {
           </div>
 
           {/* Stats */}
-          <div className="rounded-2xl border border-border/50 bg-card p-10 lg:p-14 max-w-4xl mx-auto">
-            <div className="grid gap-8 md:grid-cols-4 text-center">
+          <div className="rounded-2xl border border-border/50 bg-card p-6 sm:p-10 lg:p-14 max-w-4xl mx-auto">
+            <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
               {[
                 { value: "12,500+", label: "Active Creators" },
                 { value: "3,200+", label: "Trusted Brands" },
@@ -405,10 +405,10 @@ const Index = () => {
       {/* ═══════ CTA ═══════ */}
       <section className="py-24">
         <div className="container mx-auto px-4">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="mx-auto max-w-3xl rounded-2xl gradient-primary p-12 lg:p-16 text-center text-primary-foreground relative overflow-hidden">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="mx-auto max-w-3xl rounded-2xl gradient-primary p-6 sm:p-12 lg:p-16 text-center text-primary-foreground relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.08),transparent)]" />
             <div className="relative z-10">
-              <h2 className="text-3xl lg:text-4xl font-display font-bold mb-4">Ready to Get Started?</h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold mb-4">Ready to Get Started?</h2>
               <p className="text-primary-foreground/70 mb-8 max-w-md mx-auto">
                 Join thousands of brands and creators already growing together. Free to start, no credit card required.
               </p>

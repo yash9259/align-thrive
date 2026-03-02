@@ -73,29 +73,26 @@ const CreatorPaymentHistory = () => {
           <CardContent>
             <div className="space-y-3">
               {history.map((h) => (
-                <div key={h.id} className="flex items-center justify-between rounded-lg border border-border/50 p-4 hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                      <Flame className="h-5 w-5 text-accent" />
+                <div key={h.id} className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-border/50 p-3 sm:p-4 hover:bg-muted/30 transition-colors gap-2 sm:gap-0">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-lg bg-accent/10 flex items-center justify-center">
+                      <Flame className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
                     </div>
                     <div>
-                      <p className="font-semibold">{h.chillies} Chillies</p>
-                      <div className="flex items-center gap-2 mt-0.5">
+                      <p className="font-semibold text-sm">{h.chillies} Chillies</p>
+                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                         <span className="text-xs text-muted-foreground">{h.date}</span>
-                        <span className="text-muted-foreground">•</span>
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
                           {methodIcons[h.method]} {methodLabels[h.method]}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="text-right flex items-center gap-3">
-                    <div>
-                      <p className="font-semibold">{h.price}</p>
-                      <Badge variant="outline" className="text-[10px] text-success border-success/20 mt-0.5">
-                        <CheckCircle className="h-3 w-3 mr-1" /> {h.status}
-                      </Badge>
-                    </div>
+                  <div className="flex items-center justify-between sm:justify-end gap-3 pl-12 sm:pl-0">
+                    <Badge variant="outline" className="text-[10px] text-success border-success/20">
+                      <CheckCircle className="h-3 w-3 mr-1" /> {h.status}
+                    </Badge>
+                    <p className="font-semibold">{h.price}</p>
                   </div>
                 </div>
               ))}
