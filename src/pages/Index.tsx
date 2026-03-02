@@ -2,318 +2,328 @@ import { Link } from "react-router-dom";
 import PublicNavbar from "@/components/layout/PublicNavbar";
 import PublicFooter from "@/components/layout/PublicFooter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Flame, ArrowRight, Megaphone, Users, Handshake, CheckCircle, Star, TrendingUp, Zap, Shield, BarChart3 } from "lucide-react";
+import { Flame, ArrowRight, Megaphone, Users, Handshake, Star, Play, CheckCircle, Sparkles, Zap, TrendingUp, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-};
+const fadeUp = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } };
+const stagger = { visible: { transition: { staggerChildren: 0.15 } } };
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <PublicNavbar />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden py-20 lg:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+      {/* ═══════ HERO ═══════ */}
+      <section className="relative overflow-hidden pt-16 pb-24 lg:pt-28 lg:pb-36">
+        {/* Background Glow */}
+        <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[600px] w-[900px] rounded-full bg-primary/8 blur-[120px]" />
+        <div className="pointer-events-none absolute top-20 right-0 h-[300px] w-[300px] rounded-full bg-accent/6 blur-[80px]" />
+
         <div className="container mx-auto px-4 relative">
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mx-auto max-w-4xl text-center">
-            <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">
-              <Flame className="mr-1 h-3 w-3" /> Powered by Chillies 🌶️
-            </Badge>
-            <h1 className="mb-6 text-5xl font-extrabold tracking-tight lg:text-7xl">
-              Where Brands & Creators{" "}
-              <span className="gradient-text">Align</span>{" "}
-              to Grow Together
-            </h1>
-            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
-              The collaboration platform that connects brands with top creators. Use our Chillies 🌶️ priority system to stand out, get verified, and land premium campaigns.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
+          <motion.div initial="hidden" animate="visible" variants={stagger} className="mx-auto max-w-5xl text-center">
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
+              <Badge className="mb-8 bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 px-4 py-1.5 text-sm cursor-default">
+                <Sparkles className="mr-1.5 h-3.5 w-3.5" /> The #1 Creator-Brand Collaboration Platform
+              </Badge>
+            </motion.div>
+
+            <motion.h1 variants={fadeUp} transition={{ duration: 0.6 }} className="mb-6 text-5xl font-extrabold tracking-tight leading-[1.1] lg:text-7xl xl:text-8xl">
+              Where Brands &<br />
+              Creators{" "}
+              <span className="relative">
+                <span className="gradient-text">Align</span>
+                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
+                  <path d="M2 8 Q50 2, 100 6 T198 4" stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round" opacity="0.4" />
+                </svg>
+              </span>
+            </motion.h1>
+
+            <motion.p variants={fadeUp} transition={{ duration: 0.6 }} className="mx-auto mb-12 max-w-2xl text-lg lg:text-xl text-muted-foreground leading-relaxed">
+              Stop searching. Start collaborating. Join 12,500+ creators and 3,200+ brands already growing together on the platform built for real partnerships.
+            </motion.p>
+
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="flex flex-col sm:flex-row justify-center gap-4">
               <Link to="/register">
-                <Button size="lg" className="gradient-primary text-primary-foreground px-8 h-12 text-base">
-                  Join as Brand <ArrowRight className="ml-2 h-4 w-4" />
+                <Button size="lg" className="gradient-primary text-primary-foreground px-10 h-14 text-base rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-shadow">
+                  Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/register">
-                <Button size="lg" variant="outline" className="px-8 h-12 text-base">
-                  Join as Creator <Flame className="ml-2 h-4 w-4 text-accent" />
+              <Link to="/about">
+                <Button size="lg" variant="outline" className="px-10 h-14 text-base rounded-full group">
+                  <Play className="mr-2 h-4 w-4 group-hover:text-primary transition-colors" /> See How It Works
                 </Button>
               </Link>
-            </div>
+            </motion.div>
+
+            {/* Social Proof Strip */}
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="mt-14 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {["SJ", "MT", "PK", "AR", "EC"].map((initials, i) => (
+                    <div key={i} className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-background gradient-primary text-[10px] font-bold text-primary-foreground">
+                      {initials}
+                    </div>
+                  ))}
+                </div>
+                <span>12,500+ Creators</span>
+              </div>
+              <div className="h-4 w-px bg-border" />
+              <div className="flex items-center gap-1.5">
+                {Array(5).fill(0).map((_, i) => <Star key={i} className="h-4 w-4 fill-warning text-warning" />)}
+                <span className="ml-1">4.9/5 Rating</span>
+              </div>
+              <div className="h-4 w-px bg-border" />
+              <span>🌶️ 2.1M+ Chillies Earned</span>
+            </motion.div>
           </motion.div>
 
-          {/* Mock Dashboard Preview */}
-          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.8 }} className="mx-auto mt-16 max-w-5xl">
-            <div className="rounded-2xl border border-border bg-card p-2 shadow-2xl shadow-primary/10">
-              <div className="flex items-center gap-2 px-4 py-2 border-b border-border">
-                <div className="h-3 w-3 rounded-full bg-destructive/60" />
-                <div className="h-3 w-3 rounded-full bg-warning/60" />
-                <div className="h-3 w-3 rounded-full bg-success/60" />
-                <span className="ml-2 text-xs text-muted-foreground">align.app/dashboard</span>
+          {/* Hero Visual — Floating Dashboard */}
+          <motion.div initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.9 }} className="mx-auto mt-20 max-w-5xl perspective-1000">
+            <div className="rounded-2xl border border-border/60 bg-card shadow-2xl shadow-primary/8 overflow-hidden">
+              {/* Browser Chrome */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-secondary/40 border-b border-border/50">
+                <div className="flex gap-1.5">
+                  <div className="h-3 w-3 rounded-full bg-destructive/50" />
+                  <div className="h-3 w-3 rounded-full bg-warning/50" />
+                  <div className="h-3 w-3 rounded-full bg-success/50" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="flex items-center gap-2 rounded-full bg-secondary/80 px-4 py-1">
+                    <div className="h-2 w-2 rounded-full bg-success" />
+                    <span className="text-xs text-muted-foreground">align.app/dashboard</span>
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-4 gap-3 p-4">
-                {[
-                  { label: "Active Campaigns", value: "24", icon: Megaphone, color: "text-primary" },
-                  { label: "Creators", value: "1,284", icon: Users, color: "text-accent" },
-                  { label: "Collaborations", value: "342", icon: Handshake, color: "text-success" },
-                  { label: "Chillies Earned", value: "18.5K", icon: Flame, color: "text-chilli" },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-lg bg-secondary/50 p-4">
-                    <item.icon className={`h-5 w-5 ${item.color} mb-2`} />
-                    <p className="text-2xl font-bold">{item.value}</p>
-                    <p className="text-xs text-muted-foreground">{item.label}</p>
+
+              {/* Dashboard Content */}
+              <div className="p-5">
+                <div className="grid grid-cols-4 gap-4 mb-5">
+                  {[
+                    { label: "Active Campaigns", value: "24", trend: "+12%", icon: Megaphone, color: "from-primary/10 to-primary/5" },
+                    { label: "Total Creators", value: "1,284", trend: "+8%", icon: Users, color: "from-accent/10 to-accent/5" },
+                    { label: "Collaborations", value: "342", trend: "+24%", icon: Handshake, color: "from-success/10 to-success/5" },
+                    { label: "Chillies Earned", value: "18.5K", trend: "+31%", icon: Flame, color: "from-chilli/10 to-chilli/5" },
+                  ].map((item) => (
+                    <div key={item.label} className={`rounded-xl bg-gradient-to-br ${item.color} p-4 border border-border/30`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <item.icon className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-[11px] font-medium text-success bg-success/10 px-1.5 py-0.5 rounded">{item.trend}</span>
+                      </div>
+                      <p className="text-2xl font-bold">{item.value}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{item.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  {/* Chart Area */}
+                  <div className="col-span-2 rounded-xl bg-secondary/20 border border-border/30 p-4">
+                    <p className="text-xs font-medium text-muted-foreground mb-3">Campaign Performance</p>
+                    <div className="flex items-end gap-[6px] h-32">
+                      {[35, 55, 40, 70, 50, 85, 65, 90, 55, 95, 70, 80, 60, 88, 75, 92].map((h, i) => (
+                        <div key={i} className="flex-1 rounded-t-sm gradient-primary opacity-80 hover:opacity-100 transition-opacity" style={{ height: `${h}%` }} />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Side List */}
+                  <div className="rounded-xl bg-secondary/20 border border-border/30 p-4">
+                    <p className="text-xs font-medium text-muted-foreground mb-3">Top Creators</p>
+                    <div className="space-y-3">
+                      {[
+                        { name: "Sarah J.", score: 92, initials: "SJ" },
+                        { name: "Priya K.", score: 95, initials: "PK" },
+                        { name: "Mike T.", score: 88, initials: "MT" },
+                        { name: "Emma C.", score: 91, initials: "EC" },
+                      ].map((c) => (
+                        <div key={c.name} className="flex items-center gap-2.5">
+                          <div className="h-7 w-7 rounded-full gradient-primary flex items-center justify-center text-[9px] font-bold text-primary-foreground">{c.initials}</div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium truncate">{c.name}</p>
+                          </div>
+                          <span className="text-[10px] font-medium text-warning flex items-center"><Star className="h-2.5 w-2.5 mr-0.5 fill-warning" />{c.score}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════ TRUSTED BY ═══════ */}
+      <section className="py-12 border-y border-border/30 bg-secondary/20">
+        <div className="container mx-auto px-4">
+          <p className="text-center text-xs uppercase tracking-widest text-muted-foreground mb-6">Trusted by Leading Brands</p>
+          <div className="flex flex-wrap items-center justify-center gap-10 opacity-40">
+            {["TechFlow", "StyleCo", "GadgetHub", "FitLife", "ByteWare", "ShopNow"].map((brand) => (
+              <span key={brand} className="text-lg font-bold tracking-tight">{brand}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ VALUE PROPS ═══════ */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-3xl text-center mb-16">
+            <h2 className="text-4xl font-extrabold mb-4">Everything You Need to Collaborate</h2>
+            <p className="text-lg text-muted-foreground">One platform. Brands find creators. Creators find opportunities. Everyone grows.</p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
+            {[
+              {
+                icon: Megaphone, title: "Post & Discover", desc: "Brands post campaigns in seconds. Creators discover opportunities matched to their niche, audience, and style.",
+                gradient: "from-primary/10 to-primary/5", iconColor: "text-primary"
+              },
+              {
+                icon: Flame, title: "Chillies Priority 🌶️", desc: "Stand out with Chillies — your priority currency. Get verified, rank higher, and land campaigns before anyone else.",
+                gradient: "from-accent/10 to-accent/5", iconColor: "text-accent"
+              },
+              {
+                icon: Shield, title: "RACK Trust Score", desc: "Our Reliability, Activity, Content, Knowledge scoring system ensures brands work with quality creators every time.",
+                gradient: "from-success/10 to-success/5", iconColor: "text-success"
+              },
+            ].map((item, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1, duration: 0.5 }} viewport={{ once: true }}
+                className={`group rounded-2xl bg-gradient-to-br ${item.gradient} border border-border/30 p-8 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300`}>
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-card shadow-sm border border-border/30">
+                  <item.icon className={`h-7 w-7 ${item.iconColor}`} />
+                </div>
+                <h3 className="mb-3 text-xl font-bold">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ SPLIT CTA — BRANDS & CREATORS ═══════ */}
+      <section className="py-24 bg-secondary/20">
+        <div className="container mx-auto px-4">
+          <div className="grid gap-8 lg:grid-cols-2 max-w-5xl mx-auto">
+            {/* Brand Side */}
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}
+              className="group relative rounded-2xl bg-card border border-border/50 p-10 overflow-hidden hover:border-primary/30 hover:shadow-xl transition-all duration-300">
+              <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-primary/5 blur-[60px]" />
+              <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">For Brands</Badge>
+              <h3 className="text-3xl font-bold mb-4">Find Your Perfect Creators</h3>
+              <p className="text-muted-foreground mb-6 leading-relaxed">Access a curated network of verified creators. Post campaigns, review bids, and collaborate — all in one place.</p>
+              <div className="space-y-3 mb-8">
+                {["10,000+ verified creators", "Smart creator matching", "Campaign analytics & tracking"].map((item) => (
+                  <div key={item} className="flex items-center gap-2.5 text-sm">
+                    <CheckCircle className="h-4 w-4 text-primary shrink-0" />
+                    <span>{item}</span>
                   </div>
                 ))}
               </div>
-              <div className="grid grid-cols-3 gap-3 px-4 pb-4">
-                <div className="col-span-2 rounded-lg bg-secondary/30 p-4 h-40 flex items-end gap-1">
-                  {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88].map((h, i) => (
-                    <div key={i} className="flex-1 rounded-t gradient-primary" style={{ height: `${h}%` }} />
-                  ))}
-                </div>
-                <div className="rounded-lg bg-secondary/30 p-4 h-40 flex flex-col justify-between">
-                  <p className="text-xs font-medium text-muted-foreground">Top Creators</p>
-                  {["Sarah J.", "Mike T.", "Priya K.", "Alex R."].map((n) => (
-                    <div key={n} className="flex items-center gap-2">
-                      <div className="h-6 w-6 rounded-full gradient-primary" />
-                      <span className="text-xs">{n}</span>
-                    </div>
-                  ))}
-                </div>
+              <Link to="/brand">
+                <Button className="gradient-primary text-primary-foreground rounded-full px-8 group-hover:shadow-lg group-hover:shadow-primary/20 transition-shadow">
+                  Explore Brand Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </motion.div>
+
+            {/* Creator Side */}
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}
+              className="group relative rounded-2xl bg-card border border-border/50 p-10 overflow-hidden hover:border-accent/30 hover:shadow-xl transition-all duration-300">
+              <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-accent/5 blur-[60px]" />
+              <Badge className="mb-6 bg-accent/10 text-accent border-accent/20 hover:bg-accent/10">For Creators</Badge>
+              <h3 className="text-3xl font-bold mb-4">Land Premium Campaigns</h3>
+              <p className="text-muted-foreground mb-6 leading-relaxed">Browse opportunities, submit bids, and grow your career. Use Chillies to get priority access to the best campaigns.</p>
+              <div className="space-y-3 mb-8">
+                {["Free to apply, always", "Chillies boost your ranking", "Build your RACK reputation"].map((item) => (
+                  <div key={item} className="flex items-center gap-2.5 text-sm">
+                    <CheckCircle className="h-4 w-4 text-accent shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
               </div>
-            </div>
-          </motion.div>
+              <Link to="/creator">
+                <Button variant="outline" className="border-accent text-accent hover:bg-accent/10 rounded-full px-8">
+                  Explore Creator Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 bg-secondary/30">
+      {/* ═══════ STATS ═══════ */}
+      <section className="py-24">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold">How Align Works</h2>
-            <p className="text-muted-foreground">Three simple steps to powerful collaborations</p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3 max-w-4xl mx-auto">
+          <div className="grid gap-8 md:grid-cols-4 max-w-4xl mx-auto text-center">
             {[
-              { icon: Megaphone, title: "Brands Post Campaigns", desc: "Create campaigns with budgets, deliverables, and timelines. Reach thousands of verified creators instantly." },
-              { icon: Users, title: "Creators Apply or Bid", desc: "Browse campaigns, submit proposals, and use Chillies 🌶️ to boost your visibility and priority." },
-              { icon: Handshake, title: "Collaborate & Grow", desc: "Work together, deliver content, get paid. Build lasting partnerships and grow your portfolio." },
-            ].map((item, i) => (
-              <Card key={i} className="group relative overflow-hidden border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl gradient-primary">
-                    <item.icon className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="text-sm font-bold text-primary">Step {i + 1}</span>
-                  </div>
-                  <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
-                </CardContent>
-              </Card>
+              { value: "12,500+", label: "Active Creators", icon: Users },
+              { value: "3,200+", label: "Brands", icon: TrendingUp },
+              { value: "8,400+", label: "Campaigns Done", icon: Megaphone },
+              { value: "$2.4M+", label: "Paid to Creators", icon: Zap },
+            ].map((s, i) => (
+              <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1, duration: 0.5 }} viewport={{ once: true }}>
+                <p className="text-4xl font-extrabold gradient-text mb-2">{s.value}</p>
+                <p className="text-sm text-muted-foreground">{s.label}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Chillies System */}
-      <section className="py-20">
+      {/* ═══════ TESTIMONIALS ═══════ */}
+      <section className="py-24 bg-secondary/20">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <Badge className="mb-4 bg-accent/10 text-accent border-accent/20 hover:bg-accent/10">🌶️ Chillies System</Badge>
-            <h2 className="mb-3 text-3xl font-bold">The Priority Currency That Sets You Apart</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Every creator can apply for free. But with Chillies, you get a verification badge, top priority in search results, and higher chances of landing campaigns.
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto mb-12">
-            <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
-              <CardContent className="p-6">
-                <h3 className="mb-4 text-lg font-semibold flex items-center gap-2">
-                  <Flame className="h-5 w-5 text-accent" /> Project Chillies Required
-                </h3>
-                <div className="space-y-3">
-                  {[
-                    { range: "$0 – $50", chillies: 10 },
-                    { range: "$50 – $200", chillies: 20 },
-                    { range: "$200 – $500", chillies: 30 },
-                    { range: "$500 – $1,000", chillies: 50 },
-                    { range: "$1,000 – $5,000", chillies: 100 },
-                    { range: "$5,000+", chillies: 150 },
-                  ].map((item) => (
-                    <div key={item.range} className="flex items-center justify-between rounded-lg bg-card p-3 border border-border/50">
-                      <span className="text-sm font-medium">{item.range}</span>
-                      <Badge variant="secondary" className="bg-accent/10 text-accent">
-                        🌶️ {item.chillies} Chillies
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-              <CardContent className="p-6">
-                <h3 className="mb-4 text-lg font-semibold flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-primary" /> Buy Chillies
-                </h3>
-                <div className="space-y-3">
-                  {[
-                    { chillies: 10, price: "$3", badge: "1 week" },
-                    { chillies: 50, price: "$8", badge: "15 days" },
-                    { chillies: 100, price: "$10", badge: "30 days" },
-                    { chillies: 300, price: "$15", badge: "45 days" },
-                    { chillies: 500, price: "$22", badge: "60 days" },
-                  ].map((item) => (
-                    <div key={item.chillies} className="flex items-center justify-between rounded-lg bg-card p-3 border border-border/50">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-accent">🌶️ {item.chillies}</span>
-                        <span className="text-sm text-muted-foreground">— {item.price}</span>
-                      </div>
-                      <Badge variant="secondary" className="bg-success/10 text-success">
-                        <CheckCircle className="mr-1 h-3 w-3" /> {item.badge} badge
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Free Chillies Promotion */}
-          <div className="max-w-4xl mx-auto">
-            <Card className="border-success/20 bg-gradient-to-r from-success/5 to-primary/5">
-              <CardContent className="p-6">
-                <h3 className="mb-4 text-lg font-semibold flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-success" /> Earn Free Chillies!
-                </h3>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="rounded-lg bg-card p-4 border border-border/50">
-                    <p className="font-semibold mb-1">📸 Upload an Image Post</p>
-                    <p className="text-sm text-muted-foreground">Post about Align on social media and earn <span className="font-bold text-accent">10 Chillies + 15-day verification badge</span></p>
-                  </div>
-                  <div className="rounded-lg bg-card p-4 border border-border/50">
-                    <p className="font-semibold mb-1">🎬 Upload a Reel/Video</p>
-                    <p className="text-sm text-muted-foreground">Create a video about Align and earn <span className="font-bold text-accent">50 Chillies + 50-day verification badge</span></p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* For Brands / For Creators */}
-      <section className="py-20 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-8 md:grid-cols-2 max-w-5xl mx-auto">
-            <Card className="border-primary/20 hover:shadow-lg transition-shadow">
-              <CardContent className="p-8">
-                <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">For Brands</Badge>
-                <h3 className="mb-4 text-2xl font-bold">Scale Your Influence</h3>
-                <ul className="space-y-3">
-                  {[
-                    "Access 10,000+ verified creators",
-                    "Post campaigns with flexible budgets",
-                    "AI-powered creator matching",
-                    "RACK score for quality assurance",
-                    "Real-time campaign analytics",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link to="/brand" className="mt-6 inline-block">
-                  <Button className="gradient-primary text-primary-foreground">Explore Brand Dashboard <ArrowRight className="ml-2 h-4 w-4" /></Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card className="border-accent/20 hover:shadow-lg transition-shadow">
-              <CardContent className="p-8">
-                <Badge className="mb-4 bg-accent/10 text-accent border-accent/20 hover:bg-accent/10">For Creators</Badge>
-                <h3 className="mb-4 text-2xl font-bold">Monetize Your Talent</h3>
-                <ul className="space-y-3">
-                  {[
-                    "Browse & bid on premium campaigns",
-                    "Free to apply — Chillies for priority",
-                    "Get verified with Chillies badges",
-                    "Build your RACK reputation score",
-                    "Direct messaging with brands",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link to="/creator" className="mt-6 inline-block">
-                  <Button variant="outline" className="border-accent text-accent hover:bg-accent/10">Explore Creator Dashboard <ArrowRight className="ml-2 h-4 w-4" /></Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold">Loved by Brands & Creators</h2>
-            <p className="text-muted-foreground">See what our community has to say</p>
+          <div className="mx-auto max-w-3xl text-center mb-16">
+            <h2 className="text-4xl font-extrabold mb-4">Loved by Our Community</h2>
+            <p className="text-lg text-muted-foreground">Real stories from real creators and brands</p>
           </div>
           <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
             {[
-              { name: "Priya Sharma", role: "Fashion Creator", text: "Align's Chillies system gave me priority access to premium campaigns. My income doubled in 3 months!", avatar: "PS", rating: 5 },
-              { name: "TechFlow Inc.", role: "SaaS Brand", text: "We found 50+ quality creators in our first week. The RACK scoring ensures we only work with the best.", avatar: "TF", rating: 5 },
-              { name: "Alex Rodriguez", role: "Lifestyle Creator", text: "The free Chillies promo let me get verified without spending a dime. Now brands come to me!", avatar: "AR", rating: 5 },
+              { name: "Priya Sharma", role: "Fashion Creator • 210K followers", text: "Align completely changed how I work with brands. The Chillies system gave me priority access and my income doubled in 3 months!", avatar: "PS" },
+              { name: "TechFlow Inc.", role: "SaaS Brand • 24 campaigns", text: "We found 50+ quality creators in our first week. The RACK scoring ensures we only work with reliable, talented people.", avatar: "TF" },
+              { name: "Alex Rodriguez", role: "Lifestyle Creator • 125K followers", text: "The free Chillies promo is genius — I got verified without spending anything. Now brands reach out to me directly!", avatar: "AR" },
             ].map((t, i) => (
-              <Card key={i} className="border-border/50 hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="mb-3 flex gap-0.5">
-                    {Array(t.rating).fill(0).map((_, j) => (
-                      <Star key={j} className="h-4 w-4 fill-warning text-warning" />
-                    ))}
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1, duration: 0.5 }} viewport={{ once: true }}
+                className="rounded-2xl bg-card border border-border/50 p-6 hover:shadow-lg transition-shadow">
+                <div className="mb-4 flex gap-0.5">
+                  {Array(5).fill(0).map((_, j) => <Star key={j} className="h-4 w-4 fill-warning text-warning" />)}
+                </div>
+                <p className="text-sm text-muted-foreground mb-6 leading-relaxed italic">"{t.text}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground">{t.avatar}</div>
+                  <div>
+                    <p className="text-sm font-semibold">{t.name}</p>
+                    <p className="text-xs text-muted-foreground">{t.role}</p>
                   </div>
-                  <p className="mb-4 text-sm text-muted-foreground italic">"{t.text}"</p>
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground">{t.avatar}</div>
-                    <div>
-                      <p className="text-sm font-semibold">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20">
+      {/* ═══════ FINAL CTA ═══════ */}
+      <section className="py-24">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-3xl rounded-2xl gradient-primary p-12 text-center text-primary-foreground">
-            <h2 className="mb-4 text-3xl font-bold">Ready to Align?</h2>
-            <p className="mb-8 text-primary-foreground/80">Join thousands of brands and creators already growing together on Align.</p>
-            <div className="flex justify-center gap-4">
-              <Link to="/register">
-                <Button size="lg" className="bg-card text-foreground hover:bg-card/90">Get Started Free</Button>
-              </Link>
-              <Link to="/about">
-                <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">Learn More</Button>
-              </Link>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}
+            className="mx-auto max-w-4xl rounded-3xl gradient-primary p-16 text-center text-primary-foreground relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
+            <div className="relative">
+              <h2 className="mb-4 text-4xl lg:text-5xl font-extrabold">Ready to Align?</h2>
+              <p className="mb-10 text-lg text-primary-foreground/80 max-w-xl mx-auto">
+                Join the fastest-growing creator-brand platform. It's free to start — no credit card required.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <Link to="/register">
+                  <Button size="lg" className="bg-card text-foreground hover:bg-card/90 rounded-full px-10 h-14 text-base shadow-lg">
+                    Start for Free <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
