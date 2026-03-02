@@ -58,69 +58,6 @@ const Index = () => {
             </motion.div>
           </div>
 
-          {/* Dashboard Preview */}
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.7 }} className="mx-auto mt-16 max-w-5xl">
-            <div className="rounded-xl border border-border bg-card shadow-xl overflow-hidden">
-              <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/50 border-b border-border">
-                <div className="flex gap-1.5">
-                  <div className="h-2.5 w-2.5 rounded-full bg-destructive/40" />
-                  <div className="h-2.5 w-2.5 rounded-full bg-warning/40" />
-                  <div className="h-2.5 w-2.5 rounded-full bg-success/40" />
-                </div>
-                <div className="flex-1 flex justify-center">
-                  <span className="text-[11px] text-muted-foreground bg-muted rounded px-3 py-0.5">app.align.com/dashboard</span>
-                </div>
-              </div>
-              <div className="p-5">
-                <div className="grid grid-cols-4 gap-3 mb-4">
-                  {[
-                    { label: "Active Campaigns", value: "24", change: "+12%", color: "text-primary" },
-                    { label: "Total Creators", value: "1,284", change: "+8%", color: "text-foreground" },
-                    { label: "Collaborations", value: "342", change: "+24%", color: "text-foreground" },
-                    { label: "Avg. Engagement", value: "4.8%", change: "+0.6%", color: "text-foreground" },
-                  ].map((item) => (
-                    <div key={item.label} className="rounded-lg border border-border/60 bg-card p-3.5">
-                      <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
-                      <div className="flex items-baseline gap-2">
-                        <p className={`text-xl font-bold ${item.color}`}>{item.value}</p>
-                        <span className="text-[10px] font-medium text-success">{item.change}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="col-span-2 rounded-lg border border-border/60 bg-card p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-medium text-muted-foreground">Campaign Performance</span>
-                      <span className="text-[10px] text-muted-foreground border border-border rounded px-2 py-0.5">Last 30 days</span>
-                    </div>
-                    <div className="flex items-end gap-[5px] h-28">
-                      {[30, 45, 35, 60, 50, 75, 55, 80, 65, 90, 70, 85, 60, 78, 65, 82, 72, 88, 75, 92].map((h, i) => (
-                        <div key={i} className="flex-1 rounded-sm bg-primary/80 hover:bg-primary transition-colors" style={{ height: `${h}%` }} />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="rounded-lg border border-border/60 bg-card p-4">
-                    <span className="text-xs font-medium text-muted-foreground">Top Creators</span>
-                    <div className="mt-3 space-y-2.5">
-                      {[
-                        { name: "Priya K.", score: 95, initials: "PK" },
-                        { name: "Sarah J.", score: 92, initials: "SJ" },
-                        { name: "Emma C.", score: 91, initials: "EC" },
-                        { name: "Mike T.", score: 88, initials: "MT" },
-                      ].map((c) => (
-                        <div key={c.name} className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full gradient-primary flex items-center justify-center text-[8px] font-bold text-primary-foreground">{c.initials}</div>
-                          <span className="text-[11px] font-medium flex-1">{c.name}</span>
-                          <span className="text-[10px] text-muted-foreground">{c.score}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
