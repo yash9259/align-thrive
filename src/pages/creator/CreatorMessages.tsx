@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Send, Search, ArrowLeft, Phone, Video, Paperclip, Link2, Image, FileText, X, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -178,37 +177,25 @@ const CreatorMessages = () => {
           {/* Chat area */}
           <div className={`${showChat ? "flex" : "hidden md:flex"} flex-1 flex-col`}>
             {/* Chat header with call buttons */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-border">
-              <div className="flex items-center gap-3">
-                <button onClick={() => setShowChat(false)} className="md:hidden p-1 hover:bg-muted rounded">
+            <div className="flex items-center justify-between p-2 sm:p-4 border-b border-border gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <button onClick={() => setShowChat(false)} className="md:hidden p-1 hover:bg-muted rounded shrink-0">
                   <ArrowLeft className="h-4 w-4" />
                 </button>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground">TF</div>
-                <div>
-                  <p className="text-sm font-medium">TechFlow Inc.</p>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground">TF</div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate">TechFlow Inc.</p>
                   <p className="text-xs text-success">Online</p>
                 </div>
               </div>
-              <TooltipProvider>
-                <div className="flex items-center gap-1">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => handleCall("audio")}>
-                        <Phone className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Voice Call</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => handleCall("video")}>
-                        <Video className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Video Call</TooltipContent>
-                  </Tooltip>
-                </div>
-              </TooltipProvider>
+              <div className="flex items-center gap-0.5 shrink-0">
+                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" onClick={() => handleCall("audio")}>
+                  <Phone className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" onClick={() => handleCall("video")}>
+                  <Video className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             {/* Messages */}
