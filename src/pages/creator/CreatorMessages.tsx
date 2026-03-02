@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import CreatorSidebar from "@/components/layout/CreatorSidebar";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -137,126 +136,124 @@ const CreatorMessages = () => {
 
   return (
     <DashboardLayout sidebar={<CreatorSidebar />} title="Messages" userInitials="SJ">
-      <Card className="h-[calc(100vh-8rem)] overflow-hidden">
-        <div className="flex h-full">
-          {/* Conversation list */}
-          <div className={`${showChat ? "hidden md:flex" : "flex"} w-full md:w-80 border-r border-border flex-col`}>
-            <div className="p-3 border-b border-border">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search..." className="pl-8 h-9" />
-              </div>
-            </div>
-            <div className="flex-1 overflow-auto">
-              {conversations.map((c, i) => (
-                <div
-                  key={c.name}
-                  onClick={() => { setSelectedChat(i); setShowChat(true); }}
-                  className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-secondary/50 transition-colors ${i === selectedChat ? "bg-secondary/50" : ""}`}
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground">
-                    {c.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium truncate">{c.name}</span>
-                      <span className="text-[10px] text-muted-foreground shrink-0 ml-2">{c.time}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground truncate">{c.last}</p>
-                  </div>
-                  {c.unread > 0 && (
-                    <Badge className="gradient-primary text-primary-foreground h-5 w-5 rounded-full p-0 flex items-center justify-center text-[10px] shrink-0">
-                      {c.unread}
-                    </Badge>
-                  )}
-                </div>
-              ))}
+      <div className="-m-3 sm:-m-6 h-[calc(100vh-3.5rem)] flex">
+        {/* Conversation list */}
+        <div className={`${showChat ? "hidden md:flex" : "flex"} w-full md:w-80 border-r border-border flex-col bg-background`}>
+          <div className="p-3 border-b border-border">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search..." className="pl-8 h-9" />
             </div>
           </div>
-
-          {/* Chat area */}
-          <div className={`${showChat ? "flex" : "hidden md:flex"} flex-1 flex-col`}>
-            {/* Chat header with call buttons */}
-            <div className="flex items-center justify-between p-2 sm:p-4 border-b border-border gap-2">
-              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                <button onClick={() => setShowChat(false)} className="md:hidden p-1 hover:bg-muted rounded shrink-0">
-                  <ArrowLeft className="h-4 w-4" />
-                </button>
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground">TF</div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">TechFlow Inc.</p>
-                  <p className="text-xs text-success">Online</p>
+          <div className="flex-1 overflow-auto">
+            {conversations.map((c, i) => (
+              <div
+                key={c.name}
+                onClick={() => { setSelectedChat(i); setShowChat(true); }}
+                className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-secondary/50 transition-colors ${i === selectedChat ? "bg-secondary/50" : ""}`}
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground">
+                  {c.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                 </div>
-              </div>
-              <div className="flex items-center gap-0.5 shrink-0">
-                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" onClick={() => handleCall("audio")}>
-                  <Phone className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" onClick={() => handleCall("video")}>
-                  <Video className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-auto p-3 sm:p-4 space-y-4">
-              {chatMessages.map((m, i) => renderMessage(m, i))}
-            </div>
-
-            {/* Attach menu */}
-            {showAttachMenu && (
-              <div className="px-3 sm:px-4 pb-2">
-                <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2">
-                  <Button variant="ghost" size="sm" className="gap-2 text-xs" onClick={() => fileInputRef.current?.click()}>
-                    <FileText className="h-4 w-4" /> File
-                  </Button>
-                  <Button variant="ghost" size="sm" className="gap-2 text-xs" onClick={() => imageInputRef.current?.click()}>
-                    <Image className="h-4 w-4" /> Image
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="gap-2 text-xs"
-                    onClick={() => {
-                      const link = prompt("Paste a link:");
-                      if (link) {
-                        setChatMessages(prev => [...prev, { from: "me", text: link, time: now(), type: "link", url: link }]);
-                        setShowAttachMenu(false);
-                      }
-                    }}
-                  >
-                    <Link2 className="h-4 w-4" /> Link
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 ml-auto" onClick={() => setShowAttachMenu(false)}>
-                    <X className="h-4 w-4" />
-                  </Button>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium truncate">{c.name}</span>
+                    <span className="text-[10px] text-muted-foreground shrink-0 ml-2">{c.time}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground truncate">{c.last}</p>
                 </div>
+                {c.unread > 0 && (
+                  <Badge className="gradient-primary text-primary-foreground h-5 w-5 rounded-full p-0 flex items-center justify-center text-[10px] shrink-0">
+                    {c.unread}
+                  </Badge>
+                )}
               </div>
-            )}
-
-            {/* Input bar */}
-            <div className="p-3 sm:p-4 border-t border-border flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => setShowAttachMenu(!showAttachMenu)}>
-                <Paperclip className="h-4 w-4" />
-              </Button>
-              <Input
-                placeholder="Type a message..."
-                className="flex-1"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              />
-              <Button className="gradient-primary text-primary-foreground shrink-0" onClick={handleSend}>
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* Hidden file inputs */}
-            <input type="file" ref={fileInputRef} className="hidden" onChange={(e) => handleFileUpload(e, "file")} />
-            <input type="file" ref={imageInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, "image")} />
+            ))}
           </div>
         </div>
-      </Card>
+
+        {/* Chat area */}
+        <div className={`${showChat ? "flex" : "hidden md:flex"} flex-1 flex-col min-w-0 bg-background`}>
+          {/* Chat header */}
+          <div className="flex items-center justify-between px-3 py-2 border-b border-border gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <button onClick={() => setShowChat(false)} className="md:hidden p-1 hover:bg-muted rounded shrink-0">
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground">TF</div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">TechFlow Inc.</p>
+                <p className="text-xs text-success">Online</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => handleCall("audio")}>
+                <Phone className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => handleCall("video")}>
+                <Video className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-auto p-3 space-y-3 bg-muted/30">
+            {chatMessages.map((m, i) => renderMessage(m, i))}
+          </div>
+
+          {/* Attach menu */}
+          {showAttachMenu && (
+            <div className="px-3 pb-2 bg-background">
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2">
+                <Button variant="ghost" size="sm" className="gap-2 text-xs" onClick={() => fileInputRef.current?.click()}>
+                  <FileText className="h-4 w-4" /> File
+                </Button>
+                <Button variant="ghost" size="sm" className="gap-2 text-xs" onClick={() => imageInputRef.current?.click()}>
+                  <Image className="h-4 w-4" /> Image
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 text-xs"
+                  onClick={() => {
+                    const link = prompt("Paste a link:");
+                    if (link) {
+                      setChatMessages(prev => [...prev, { from: "me", text: link, time: now(), type: "link", url: link }]);
+                      setShowAttachMenu(false);
+                    }
+                  }}
+                >
+                  <Link2 className="h-4 w-4" /> Link
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 ml-auto" onClick={() => setShowAttachMenu(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Input bar */}
+          <div className="px-3 py-2 border-t border-border flex items-center gap-2 bg-background">
+            <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => setShowAttachMenu(!showAttachMenu)}>
+              <Paperclip className="h-4 w-4" />
+            </Button>
+            <Input
+              placeholder="Type a message..."
+              className="flex-1"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            />
+            <Button size="icon" className="gradient-primary text-primary-foreground h-9 w-9 rounded-full shrink-0" onClick={handleSend}>
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Hidden file inputs */}
+          <input type="file" ref={fileInputRef} className="hidden" onChange={(e) => handleFileUpload(e, "file")} />
+          <input type="file" ref={imageInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, "image")} />
+        </div>
+      </div>
     </DashboardLayout>
   );
 };
