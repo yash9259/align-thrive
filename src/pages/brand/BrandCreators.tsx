@@ -1,4 +1,3 @@
-import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import BrandSidebar from "@/components/layout/BrandSidebar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,8 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Flame, Star, Search, Shield, Instagram, Youtube, Twitter } from "lucide-react";
+import { Flame, Search, Shield, Instagram, Youtube, Twitter } from "lucide-react";
 
 interface Creator {
   name: string;
@@ -42,7 +40,6 @@ const rackLabels: { key: keyof Creator["rack"]; label: string; color: string; de
 ];
 
 const BrandCreators = () => {
-  const [viewingCreator, setViewingCreator] = useState<Creator | null>(null);
 
   return (
     <DashboardLayout sidebar={<BrandSidebar />} title="Discover Creators" userInitials="TF">
@@ -116,11 +113,8 @@ const BrandCreators = () => {
                     </div>
                   </div>
 
-                  {/* RACK Score - clickable */}
-                  <button
-                    onClick={() => setViewingCreator(c)}
-                    className="w-full rounded-lg border border-border/50 bg-muted/30 p-3 mb-3 hover:border-primary/20 transition-colors cursor-pointer text-left"
-                  >
+                  {/* RACK Score - read only */}
+                  <div className="w-full rounded-lg border border-border/50 bg-muted/30 p-3 mb-3">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                         <Shield className="h-3 w-3 text-primary" /> RACK Score
@@ -136,8 +130,7 @@ const BrandCreators = () => {
                         </div>
                       ))}
                     </div>
-                    <p className="text-[9px] text-primary mt-1.5 font-medium">View breakdown →</p>
-                  </button>
+                  </div>
 
                   <div className="flex items-center justify-between mb-3">
                     <span className="flex items-center gap-1 text-xs text-accent font-medium">
@@ -153,61 +146,6 @@ const BrandCreators = () => {
         </div>
       </div>
 
-      {/* RACK Detail Dialog */}
-      <Dialog open={!!viewingCreator} onOpenChange={(open) => !open && setViewingCreator(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              RACK Score — {viewingCreator?.name}
-            </DialogTitle>
-          </DialogHeader>
-
-          {viewingCreator && (
-            <div className="space-y-6 py-4">
-              {/* Overall */}
-              <div className="flex items-center justify-center">
-                <div className="relative flex h-28 w-28 items-center justify-center rounded-full border-4 border-primary">
-                  <div className="text-center">
-                    <p className="text-3xl font-bold">{getRackAvg(viewingCreator.rack)}</p>
-                    <p className="text-[10px] text-muted-foreground">Overall</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Breakdown */}
-              <div className="space-y-4">
-                {rackLabels.map(({ key, label, color, desc }) => (
-                  <div key={key}>
-                    <div className="flex items-center justify-between mb-1">
-                      <div>
-                        <span className="text-sm font-medium">{label}</span>
-                        <p className="text-[10px] text-muted-foreground">{desc}</p>
-                      </div>
-                      <span className="text-sm font-bold">{viewingCreator.rack[key]}</span>
-                    </div>
-                    <div className="h-2 rounded-full bg-secondary">
-                      <div className={`h-full rounded-full ${color} transition-all`} style={{ width: `${viewingCreator.rack[key]}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Interpretation */}
-              <div className="rounded-lg bg-muted/50 p-4">
-                <p className="text-xs font-medium mb-1">Score Interpretation</p>
-                <p className="text-xs text-muted-foreground">
-                  {getRackAvg(viewingCreator.rack) >= 90
-                    ? "⭐ Exceptional creator — highly reliable, active, and produces top-tier content."
-                    : getRackAvg(viewingCreator.rack) >= 80
-                    ? "✅ Strong creator — consistently delivers good work with solid engagement."
-                    : "📊 Developing creator — growing reputation with room for improvement."}
-                </p>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </DashboardLayout>
   );
 };
