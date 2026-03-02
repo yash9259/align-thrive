@@ -40,8 +40,8 @@ const Index = () => {
               </motion.div>
 
               <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }} className="mb-6 font-display text-5xl font-extrabold tracking-tight leading-[1.1] lg:text-6xl xl:text-7xl">
-                The Smarter Way to{" "}
-                <span className="gradient-text">Collaborate</span>
+                Where Brands &amp; Creators{" "}
+                <span className="gradient-text">Align</span>
               </motion.h1>
 
               <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.5 }} className="mb-10 text-lg text-muted-foreground leading-relaxed">
@@ -50,12 +50,12 @@ const Index = () => {
 
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }} className="flex flex-col sm:flex-row gap-4">
                 <Link to="/register">
-                  <Button size="lg" className="gradient-primary text-primary-foreground rounded-lg px-8 h-13 text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:opacity-95 transition-all">
+                  <Button size="lg" className="gradient-primary text-primary-foreground rounded-full px-8 h-12 text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:opacity-95 transition-all">
                     Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>
-                  <Button size="lg" variant="outline" className="rounded-lg px-8 h-13 text-base font-semibold">
+                  <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-base font-semibold border-2">
                     <Play className="mr-2 h-4 w-4" /> How It Works
                   </Button>
                 </button>
@@ -419,7 +419,7 @@ const Index = () => {
                   </Button>
                 </Link>
                 <Link to="/login">
-                  <Button size="lg" variant="outline" className="border-primary-foreground/25 text-primary-foreground hover:bg-primary-foreground/10 rounded-lg px-8 h-12 font-semibold">
+                  <Button size="lg" variant="outline" className="border-primary-foreground/25 text-foreground bg-card hover:bg-card/90 rounded-lg px-8 h-12 font-semibold">
                     Sign In
                   </Button>
                 </Link>
