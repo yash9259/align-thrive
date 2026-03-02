@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import CreatorSidebar from "@/components/layout/CreatorSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +14,14 @@ const packages = [
   { chillies: 500, price: "$22", badge: "60 days", popular: false },
 ];
 
-const CreatorBuyChillies = () => (
+const CreatorBuyChillies = () => {
+  const navigate = useNavigate();
+
+  const handleBuyNow = (p: typeof packages[0]) => {
+    navigate(`/creator/buy-chillies/payment?chillies=${p.chillies}&price=${encodeURIComponent(p.price)}&badge=${encodeURIComponent(p.badge)}`);
+  };
+
+  return (
   <DashboardLayout sidebar={<CreatorSidebar />} title="Buy Chillies" userInitials="SJ">
     <div className="space-y-6">
       <div className="text-center max-w-2xl mx-auto">
@@ -41,7 +49,7 @@ const CreatorBuyChillies = () => (
                 <Shield className="h-3 w-3 text-success" />
                 <span className="text-xs text-success font-medium">{p.badge} badge</span>
               </div>
-              <Button className={`w-full ${p.popular ? 'gradient-primary text-primary-foreground' : ''}`} variant={p.popular ? 'default' : 'outline'} size="sm">
+              <Button onClick={() => handleBuyNow(p)} className={`w-full ${p.popular ? 'gradient-primary text-primary-foreground' : ''}`} variant={p.popular ? 'default' : 'outline'} size="sm">
                 Buy Now
               </Button>
             </CardContent>
@@ -101,6 +109,7 @@ const CreatorBuyChillies = () => (
       </Card>
     </div>
   </DashboardLayout>
-);
+  );
+};
 
 export default CreatorBuyChillies;
