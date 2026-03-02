@@ -7,12 +7,12 @@ import { motion, AnimatePresence } from "framer-motion";
 const PublicNavbar = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
+  const isHome = isActive("/");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const scrollToSection = useCallback((id: string) => {
     setMobileOpen(false);
-    if (location.pathname !== "/") {
-      // Navigate home first, then scroll after render
+    if (!isHome) {
       window.location.href = `/#${id}`;
       return;
     }
@@ -20,7 +20,7 @@ const PublicNavbar = () => {
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [location.pathname]);
+  }, [isHome]);
 
   const sectionLinks = [
     { id: "how-it-works", label: "How It Works" },
@@ -31,6 +31,7 @@ const PublicNavbar = () => {
   return (
     <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
             <Flame className="h-5 w-5 text-primary-foreground" />
@@ -39,15 +40,15 @@ const PublicNavbar = () => {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-8 md:flex">
-          <Link to="/" className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/') ? 'text-primary' : 'text-muted-foreground'}`}>
+        <div className="hidden items-center gap-7 md:flex">
+          <Link to="/" className={`text-sm font-medium transition-colors hover:text-primary ${isHome ? 'text-primary' : 'text-muted-foreground'}`}>
             Home
           </Link>
-          {isActive("/") && sectionLinks.map((link) => (
+          {sectionLinks.map((link) => (
             <button
               key={link.id}
               onClick={() => scrollToSection(link.id)}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer bg-transparent border-none"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer bg-transparent border-none p-0"
             >
               {link.label}
             </button>
@@ -57,6 +58,7 @@ const PublicNavbar = () => {
           </Link>
         </div>
 
+        {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
           <Link to="/login">
             <Button variant="ghost" size="sm">Sign In</Button>
@@ -90,11 +92,11 @@ const PublicNavbar = () => {
               <Link
                 to="/"
                 onClick={() => setMobileOpen(false)}
-                className={`text-sm font-medium py-2.5 px-3 rounded-lg transition-colors ${isActive('/') ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+                className={`text-sm font-medium py-2.5 px-3 rounded-lg transition-colors ${isHome ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
               >
                 Home
               </Link>
-              {isActive("/") && sectionLinks.map((link) => (
+              {sectionLinks.map((link) => (
                 <button
                   key={link.id}
                   onClick={() => scrollToSection(link.id)}
