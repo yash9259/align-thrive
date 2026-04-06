@@ -1,10 +1,12 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import CreatorSidebar from "@/components/layout/CreatorSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Flame, CheckCircle, Shield, Star, Zap } from "lucide-react";
+import { Flame, CheckCircle, Shield, Zap } from "lucide-react";
+import { getCurrentCreatorContext } from "@/lib/creator-api";
 
 const packages = [
   { chillies: 10, price: "$3", badge: "1 week", popular: false },
@@ -16,13 +18,25 @@ const packages = [
 
 const CreatorBuyChillies = () => {
   const navigate = useNavigate();
+  const [chilliesBalance, setChilliesBalance] = useState<number | null>(null);
+  const [userInitials, setUserInitials] = useState("CR");
+
+  useEffect(() => {
+    const load = async () => {
+      const ctx = await getCurrentCreatorContext();
+      if (!ctx) return;
+      setChilliesBalance(ctx.chilliesBalance);
+      setUserInitials(ctx.initials);
+    };
+    load();
+  }, []);
 
   const handleBuyNow = (p: typeof packages[0]) => {
     navigate(`/creator/buy-chillies/payment?chillies=${p.chillies}&price=${encodeURIComponent(p.price)}&badge=${encodeURIComponent(p.badge)}`);
   };
 
   return (
-  <DashboardLayout sidebar={<CreatorSidebar />} title="Buy Chillies" userInitials="SJ">
+  <DashboardLayout sidebar={<CreatorSidebar />} title="Buy Chillies" userInitials={userInitials}>
     <div className="space-y-6">
       <div className="text-center max-w-2xl mx-auto">
         <Badge className="mb-4 bg-accent/10 text-accent border-accent/20 hover:bg-accent/10">🌶️ Chillies Store</Badge>
@@ -30,7 +44,7 @@ const CreatorBuyChillies = () => {
         <p className="text-muted-foreground">Buy Chillies to get verified badges, priority placement, and higher chances of landing campaigns.</p>
         <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2">
           <Flame className="h-4 w-4 text-accent" />
-          <span className="text-sm font-medium">Your Balance: <span className="text-accent font-bold">245 Chillies</span></span>
+          <span className="text-sm font-medium">Your Balance: <span className="text-accent font-bold">{chilliesBalance !== null ? `${chilliesBalance} Chillies` : "Loading..."}</span></span>
         </div>
       </div>
 

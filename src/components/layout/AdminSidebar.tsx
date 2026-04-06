@@ -4,8 +4,9 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
+import { signOutAndRedirect } from "@/lib/auth";
 
-const items = [
+export const adminSidebarItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
   { title: "Users", url: "/admin/users", icon: Users },
   { title: "Campaigns", url: "/admin/campaigns", icon: Megaphone },
@@ -20,6 +21,15 @@ const AdminSidebar = () => {
   const collapsed = state === "collapsed";
   const location = useLocation();
 
+  const isItemActive = (url: string) => {
+    const isSectionRoot = url.split("/").filter(Boolean).length === 1;
+    return isSectionRoot ? location.pathname === url : location.pathname === url || location.pathname.startsWith(`${url}/`);
+  };
+
+  const handleLogout = () => {
+    void signOutAndRedirect("/login");
+  };
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -32,9 +42,9 @@ const AdminSidebar = () => {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {adminSidebarItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={location.pathname === item.url}>
+                  <SidebarMenuButton asChild isActive={isItemActive(item.url)}>
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
@@ -48,11 +58,9 @@ const AdminSidebar = () => {
         <div className="mt-auto border-t border-sidebar-border p-3">
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link to="/">
-                  <LogOut className="h-4 w-4" />
-                  {!collapsed && <span>Logout</span>}
-                </Link>
+              <SidebarMenuButton onClick={handleLogout}>
+                <LogOut className="h-4 w-4" />
+                {!collapsed && <span>Logout</span>}
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

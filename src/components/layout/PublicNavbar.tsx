@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Flame, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -34,9 +34,7 @@ const PublicNavbar = () => {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-            <Flame className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <img src="/alignlogo.png" alt="Align logo" className="h-16 w-auto" />
           <span className="text-xl font-bold tracking-tight">Align</span>
         </Link>
 

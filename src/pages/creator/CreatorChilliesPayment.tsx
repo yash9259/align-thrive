@@ -9,8 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Flame, CreditCard, Shield, ArrowLeft, CheckCircle, Smartphone, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { getCurrentCreatorContext, purchaseCreatorChillies } from "@/lib/creator-api";
 
 const CreatorChilliesPayment = () => {
   const [searchParams] = useSearchParams();
@@ -29,6 +30,18 @@ const CreatorChilliesPayment = () => {
   const [paypalEmail, setPaypalEmail] = useState("");
   const [processing, setProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("card");
+  const [creatorId, setCreatorId] = useState("");
+  const [userInitials, setUserInitials] = useState("CR");
+
+  useEffect(() => {
+    const load = async () => {
+      const ctx = await getCurrentCreatorContext();
+      if (!ctx) return;
+      setCreatorId(ctx.userId);
+      setUserInitials(ctx.initials);
+    };
+    load();
+  }, []);
 
   const formatCardNumber = (value: string) => {
     const cleaned = value.replace(/\D/g, "").slice(0, 16);
@@ -55,15 +68,27 @@ const CreatorChilliesPayment = () => {
       return;
     }
     setProcessing(true);
-    setTimeout(() => {
-      setProcessing(false);
-      toast({ title: "Payment Successful! 🎉", description: `${chillies} Chillies have been added to your account.` });
-      navigate("/creator/buy-chillies");
+    setTimeout(async () => {
+      try {
+        await purchaseCreatorChillies(
+          creatorId,
+          Number(chillies),
+          price,
+          badge,
+          paymentMethod as "card" | "upi" | "paypal"
+        );
+        toast({ title: "Payment Successful! 🎉", description: `${chillies} Chillies have been added to your account.` });
+        navigate("/creator/buy-chillies");
+      } catch {
+        toast({ title: "Payment Failed", description: "Could not process payment. Please try again.", variant: "destructive" });
+      } finally {
+        setProcessing(false);
+      }
     }, 2000);
   };
 
   return (
-    <DashboardLayout sidebar={<CreatorSidebar />} title="Payment" userInitials="SJ">
+    <DashboardLayout sidebar={<CreatorSidebar />} title="Payment" userInitials={userInitials}>
       <div className="max-w-2xl mx-auto space-y-6">
         <Button variant="ghost" size="sm" onClick={() => navigate("/creator/buy-chillies")} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> Back to Chillies Store

@@ -1,17 +1,21 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, Search, Flame, Megaphone, UserCheck, MessageSquare, X } from "lucide-react";
+import { Bell, Search, Flame, Megaphone, UserCheck, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
+import { Link, useLocation } from "react-router-dom";
+import { brandSidebarItems } from "@/components/layout/BrandSidebar";
+import { creatorSidebarItems } from "@/components/layout/CreatorSidebar";
+import { adminSidebarItems } from "@/components/layout/AdminSidebar";
 
 interface DashboardLayoutProps {
   children: ReactNode;
   sidebar: ReactNode;
   title: string;
   userInitials?: string;
+  hideMobileNav?: boolean;
 }
 
 const notifications = [
@@ -22,21 +26,43 @@ const notifications = [
   { id: 5, icon: Megaphone, title: "Campaign Update", desc: "Holiday Season Sale deadline extended", time: "5h ago", unread: false, color: "text-warning" },
 ];
 
-const DashboardLayout = ({ children, sidebar, title, userInitials = "JD" }: DashboardLayoutProps) => {
+const DashboardLayout = ({ children, sidebar, title, userInitials = "JD", hideMobileNav = false }: DashboardLayoutProps) => {
   const [notifOpen, setNotifOpen] = useState(false);
   const [readIds, setReadIds] = useState<number[]>([]);
+  const location = useLocation();
 
   const unreadCount = notifications.filter(n => n.unread && !readIds.includes(n.id)).length;
 
   const markAllRead = () => setReadIds(notifications.map(n => n.id));
 
+  const mobileNavItems = useMemo(() => {
+    if (location.pathname.startsWith("/brand")) {
+      return brandSidebarItems.filter((item) => ["Dashboard", "Campaigns", "Creators", "Messages"].includes(item.title));
+    }
+
+    if (location.pathname.startsWith("/creator")) {
+      return creatorSidebarItems.filter((item) => ["Dashboard", "Projects", "Invitations", "Messages"].includes(item.title));
+    }
+
+    if (location.pathname.startsWith("/admin")) {
+      return adminSidebarItems.filter((item) => ["Dashboard", "Users", "Campaigns", "Analytics"].includes(item.title));
+    }
+
+    return [];
+  }, [location.pathname]);
+
+  const isNavItemActive = (url: string) => {
+    const isSectionRoot = url.split("/").filter(Boolean).length === 1;
+    return isSectionRoot ? location.pathname === url : location.pathname === url || location.pathname.startsWith(`${url}/`);
+  };
+
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="dashboard-shell min-h-screen flex w-full">
         {sidebar}
-        <div className="flex-1 flex flex-col min-w-0">
-          <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b border-border bg-background/80 backdrop-blur-md px-4">
-            <SidebarTrigger />
+        <div className="flex-1 flex min-w-0 flex-col">
+          <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-border/70 bg-background/92 px-3 backdrop-blur-md sm:px-4">
+            <SidebarTrigger className={mobileNavItems.length ? "hidden md:inline-flex" : "inline-flex"} />
             <h1 className="text-lg font-semibold truncate">{title}</h1>
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
               <div className="relative hidden md:block">
@@ -100,7 +126,34 @@ const DashboardLayout = ({ children, sidebar, title, userInitials = "JD" }: Dash
               </Avatar>
             </div>
           </header>
-          <main className="flex-1 overflow-auto p-3 sm:p-6">{children}</main>
+          <main className="flex-1 overflow-auto p-3 pb-32 sm:p-6 md:pb-6">{children}</main>
+
+          {!!mobileNavItems.length && !hideMobileNav && (
+            <div className="fixed inset-x-0 bottom-2 z-50 px-3 pb-[calc(env(safe-area-inset-bottom,0px))] md:hidden">
+              <div className="mobile-dock mx-auto w-full rounded-[1.75rem] px-2 py-1.5">
+                <div className="grid grid-cols-4 items-end gap-1">
+                  {mobileNavItems.map((item) => {
+                    const active = isNavItemActive(item.url);
+                    return (
+                      <Link
+                        key={item.title}
+                        to={item.url}
+                        className="mobile-dock-item relative flex flex-col items-center justify-end pb-1 pt-3 text-[10px] font-medium transition-colors"
+                        aria-label={item.title}
+                      >
+                        <span
+                          className={active ? "mobile-dock-icon mobile-dock-icon-active absolute -top-5 h-12 w-12" : "mobile-dock-icon mb-1 h-9 w-9"}
+                        >
+                          <item.icon className="h-5 w-5" />
+                        </span>
+                        <span className={active ? "mt-7 text-[hsl(var(--dock-foreground))]" : "mt-0"}>{item.title}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </SidebarProvider>

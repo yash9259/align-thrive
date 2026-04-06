@@ -48,6 +48,10 @@
     --chilli-foreground: 0 0% 100%;
     --gradient-start: 262 80% 50%;
     --gradient-end: 280 70% 60%;
+    --dock: 224 22% 10%;
+    --dock-foreground: 0 0% 100%;
+    --dock-muted: 220 9% 68%;
+    --dock-ring: 23 100% 90%;
   }
 
   .dark {
@@ -86,6 +90,10 @@
     --chilli-foreground: 0 0% 100%;
     --gradient-start: 262 80% 60%;
     --gradient-end: 280 70% 70%;
+    --dock: 220 22% 10%;
+    --dock-foreground: 0 0% 100%;
+    --dock-muted: 220 10% 72%;
+    --dock-ring: 23 60% 26%;
   }
 }
 
@@ -96,6 +104,15 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Sora', 'Inter', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at top left, hsl(var(--primary) / 0.08), transparent 28%),
+      radial-gradient(circle at top right, hsl(var(--accent) / 0.08), transparent 24%);
+    background-attachment: fixed;
+  }
+
+  #root {
+    min-height: 100vh;
   }
 }
 
@@ -173,5 +190,53 @@
   .hover-lift:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 60px -15px hsl(var(--primary) / 0.15);
+  }
+
+  .dashboard-shell {
+    background:
+      radial-gradient(circle at top, hsl(var(--primary) / 0.06), transparent 26%),
+      linear-gradient(180deg, hsl(var(--background)), hsl(var(--background)));
+  }
+
+  .mobile-dock {
+    background:
+      radial-gradient(circle at top left, hsl(var(--primary) / 0.16), transparent 42%),
+      radial-gradient(circle at bottom right, hsl(var(--accent) / 0.18), transparent 36%),
+      linear-gradient(180deg, hsl(var(--card) / 0.88), hsl(var(--background) / 0.8));
+    border: 1px solid hsl(var(--border) / 0.34);
+    box-shadow:
+      0 24px 64px -28px hsl(var(--primary) / 0.22),
+      0 10px 30px -18px hsl(var(--accent) / 0.2),
+      inset 0 1px 0 hsl(0 0% 100% / 0.35);
+    backdrop-filter: blur(26px) saturate(160%);
+  }
+
+  .mobile-dock-item {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .mobile-dock-item:hover {
+    color: hsl(var(--foreground));
+  }
+
+  .mobile-dock-icon {
+    display: flex;
+    height: 2.25rem;
+    width: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: hsl(var(--background) / 0.5);
+    border: 1px solid hsl(var(--border) / 0.28);
+    transition: transform 200ms ease, color 200ms ease, background 200ms ease;
+  }
+
+  .mobile-dock-icon-active {
+    background: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary)));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 16px 34px -16px hsl(var(--accent) / 0.85);
+    outline: 0.42rem solid hsl(var(--accent) / 0.14);
+    border-color: hsl(0 0% 100% / 0.18);
+    transform: translateY(-0.125rem);
   }
 }

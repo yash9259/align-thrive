@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Flame } from "lucide-react";
 
 const PublicFooter = () => (
   <footer className="border-t border-border bg-card">
@@ -7,12 +6,10 @@ const PublicFooter = () => (
       <div className="grid gap-8 md:grid-cols-4">
         <div>
           <div className="mb-4 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
-              <Flame className="h-4 w-4 text-primary-foreground" />
-            </div>
+            <img src="/alignlogo.png" alt="Align logo" className="h-16 w-auto" />
             <span className="text-lg font-bold">Align</span>
           </div>
-          <p className="text-sm text-muted-foreground">Where Brands & Creators align to grow together. Powered by the Chillies 🌶️ priority system.</p>
+          <p className="text-sm text-muted-foreground">Where Brands & Creators align to grow together.</p>
         </div>
         <div>
           <h4 className="mb-3 text-sm font-semibold">Platform</h4>

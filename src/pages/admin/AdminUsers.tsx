@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import AdminSidebar from "@/components/layout/AdminSidebar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,56 +9,73 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Search, Star, Flame, Shield, Pencil } from "lucide-react";
+import { Search, Flame, Shield, Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { fetchAdminUsersData, getCurrentAdminContext, updateAdminCreatorRackScore, type AdminCreatorUser, type AdminBrandUser } from "@/lib/admin-api";
 
-interface Creator {
-  name: string;
-  email: string;
-  niche: string;
-  rack: { reliability: number; activity: number; contentQuality: number; knowledge: number };
-  chillies: number;
-  status: string;
-  joined: string;
-}
-
-const initialCreators: Creator[] = [
-  { name: "Sarah Johnson", email: "sarah@creator.com", niche: "Lifestyle", rack: { reliability: 95, activity: 88, contentQuality: 94, knowledge: 91 }, chillies: 245, status: "Approved", joined: "Sep 2024" },
-  { name: "Mike Thompson", email: "mike@creator.com", niche: "Tech", rack: { reliability: 90, activity: 82, contentQuality: 88, knowledge: 92 }, chillies: 120, status: "Approved", joined: "Oct 2024" },
-  { name: "Priya Kapoor", email: "priya@creator.com", niche: "Fashion", rack: { reliability: 97, activity: 93, contentQuality: 96, knowledge: 94 }, chillies: 380, status: "Approved", joined: "Aug 2024" },
-  { name: "Alex Rivera", email: "alex@creator.com", niche: "Fitness", rack: { reliability: 72, activity: 80, contentQuality: 78, knowledge: 82 }, chillies: 50, status: "Suspended", joined: "Nov 2024" },
-  { name: "Emma Chen", email: "emma@creator.com", niche: "Food", rack: { reliability: 93, activity: 89, contentQuality: 91, knowledge: 90 }, chillies: 200, status: "Approved", joined: "Dec 2024" },
-];
-
-const brands = [
-  { name: "TechFlow Inc.", email: "hello@techflow.com", industry: "Technology", campaigns: 24, status: "Approved", joined: "Jan 2025" },
-  { name: "StyleCo", email: "info@styleco.com", industry: "Fashion", campaigns: 12, status: "Approved", joined: "Feb 2025" },
-  { name: "GadgetHub", email: "team@gadgethub.com", industry: "Electronics", campaigns: 8, status: "Suspended", joined: "Mar 2025" },
-  { name: "FitLife", email: "hi@fitlife.com", industry: "Health", campaigns: 15, status: "Approved", joined: "Jan 2025" },
-];
+type Creator = AdminCreatorUser;
+type Brand = AdminBrandUser;
 
 const sc: Record<string, string> = { Approved: "bg-success/10 text-success", Suspended: "bg-destructive/10 text-destructive" };
 
 const getRackAvg = (r: Creator["rack"]) => Math.round((r.reliability + r.activity + r.contentQuality + r.knowledge) / 4);
 
 const AdminUsers = () => {
-  const [creators, setCreators] = useState(initialCreators);
+  const [creators, setCreators] = useState<Creator[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [search, setSearch] = useState("");
   const [editingCreator, setEditingCreator] = useState<Creator | null>(null);
   const [editRack, setEditRack] = useState({ reliability: 0, activity: 0, contentQuality: 0, knowledge: 0 });
+  const [userInitials, setUserInitials] = useState("AD");
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+
+  useEffect(() => {
+    let active = true;
+
+    const load = async () => {
+      try {
+        const [context, users] = await Promise.all([getCurrentAdminContext(), fetchAdminUsersData()]);
+        if (!active) return;
+        setUserInitials(context.initials);
+        setCreators(users.creators);
+        setBrands(users.brands);
+      } catch (error) {
+        if (!active) return;
+        const message = error instanceof Error ? error.message : "Unable to load users.";
+        toast({ title: "Users error", description: message, variant: "destructive" });
+      } finally {
+        if (active) setIsLoading(false);
+      }
+    };
+
+    void load();
+    return () => {
+      active = false;
+    };
+  }, [toast]);
 
   const openEdit = (c: Creator) => {
     setEditingCreator(c);
     setEditRack({ ...c.rack });
   };
 
-  const saveRack = () => {
+  const saveRack = async () => {
     if (!editingCreator) return;
-    setCreators((prev) =>
-      prev.map((c) => (c.email === editingCreator.email ? { ...c, rack: { ...editRack } } : c))
-    );
-    toast({ title: "RACK Score Updated", description: `${editingCreator.name}'s scores have been saved.` });
-    setEditingCreator(null);
+
+    const nextScore = getRackAvg(editRack);
+
+    try {
+      await updateAdminCreatorRackScore(editingCreator.id, nextScore);
+      setCreators((prev) =>
+        prev.map((c) => (c.id === editingCreator.id ? { ...c, rack: { ...editRack } } : c)),
+      );
+      toast({ title: "RACK Score Updated", description: `${editingCreator.name}'s score is now ${nextScore}.` });
+      setEditingCreator(null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to save RACK score.";
+      toast({ title: "Update failed", description: message, variant: "destructive" });
+    }
   };
 
   const rackLabels: { key: keyof Creator["rack"]; label: string; color: string }[] = [
@@ -68,20 +85,40 @@ const AdminUsers = () => {
     { key: "knowledge", label: "Knowledge", color: "bg-warning" },
   ];
 
+  const filteredCreators = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return creators;
+    return creators.filter((creator) =>
+      creator.name.toLowerCase().includes(q) ||
+      creator.email.toLowerCase().includes(q) ||
+      creator.niche.toLowerCase().includes(q),
+    );
+  }, [creators, search]);
+
+  const filteredBrands = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return brands;
+    return brands.filter((brand) =>
+      brand.name.toLowerCase().includes(q) ||
+      brand.email.toLowerCase().includes(q) ||
+      brand.industry.toLowerCase().includes(q),
+    );
+  }, [brands, search]);
+
   return (
-    <DashboardLayout sidebar={<AdminSidebar />} title="User Management" userInitials="AD">
+    <DashboardLayout sidebar={<AdminSidebar />} title="User Management" userInitials={userInitials}>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search users..." className="pl-9" />
+            <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search users..." className="pl-9" />
           </div>
         </div>
 
         <Tabs defaultValue="creators">
           <TabsList>
-            <TabsTrigger value="creators">Creators ({creators.length})</TabsTrigger>
-            <TabsTrigger value="brands">Brands ({brands.length})</TabsTrigger>
+            <TabsTrigger value="creators">Creators ({filteredCreators.length})</TabsTrigger>
+            <TabsTrigger value="brands">Brands ({filteredBrands.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="creators">
@@ -101,8 +138,12 @@ const AdminUsers = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {creators.map((c) => (
-                      <tr key={c.email} className="border-b border-border/50 last:border-0">
+                    {isLoading ? (
+                      <tr>
+                        <td className="p-4 text-muted-foreground" colSpan={8}>Loading creators...</td>
+                      </tr>
+                    ) : filteredCreators.map((c) => (
+                      <tr key={c.id} className="border-b border-border/50 last:border-0">
                         <td className="p-4">
                           <p className="font-medium">{c.name}</p>
                           <p className="text-xs text-muted-foreground">{c.email}</p>
@@ -145,6 +186,11 @@ const AdminUsers = () => {
                         </td>
                       </tr>
                     ))}
+                    {!isLoading && filteredCreators.length === 0 && (
+                      <tr>
+                        <td className="p-4 text-muted-foreground" colSpan={8}>No creators found.</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </CardContent>
@@ -166,8 +212,12 @@ const AdminUsers = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {brands.map((b) => (
-                      <tr key={b.email} className="border-b border-border/50 last:border-0">
+                    {isLoading ? (
+                      <tr>
+                        <td className="p-4 text-muted-foreground" colSpan={6}>Loading brands...</td>
+                      </tr>
+                    ) : filteredBrands.map((b) => (
+                      <tr key={b.id} className="border-b border-border/50 last:border-0">
                         <td className="p-4">
                           <p className="font-medium">{b.name}</p>
                           <p className="text-xs text-muted-foreground">{b.email}</p>
@@ -183,6 +233,11 @@ const AdminUsers = () => {
                         </td>
                       </tr>
                     ))}
+                    {!isLoading && filteredBrands.length === 0 && (
+                      <tr>
+                        <td className="p-4 text-muted-foreground" colSpan={6}>No brands found.</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </CardContent>
