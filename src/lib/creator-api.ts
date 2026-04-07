@@ -161,7 +161,7 @@ export type CreatorSubmissionCampaignOption = {
 
 export type CreatorContentSubmissionItem = {
   id: string;
-  campaignId: string;
+  campaignId: string | null;
   campaignTitle: string;
   brandName: string;
   title: string;
@@ -1007,7 +1007,7 @@ export const fetchCreatorContentSubmissions = async (creatorId: string): Promise
     .order("submitted_at", { ascending: false });
   if (error) throw error;
 
-  const campaignIds = Array.from(new Set((rows ?? []).map((row) => row.campaign_id)));
+  const campaignIds = Array.from(new Set((rows ?? []).map((row) => row.campaign_id).filter(Boolean))) as string[];
   const { data: campaignRows, error: campaignError } = campaignIds.length
     ? await supabase.from("campaigns").select("id, title, brand_id").in("id", campaignIds)
     : { data: [], error: null };
@@ -1022,25 +1022,61 @@ export const fetchCreatorContentSubmissions = async (creatorId: string): Promise
   const campaignMap = new Map((campaignRows ?? []).map((campaign) => [campaign.id, campaign]));
   const brandMap = new Map((brandRows ?? []).map((brand) => [brand.id, brand.company_name]));
 
-  return (rows ?? []).map((row) => {
-    const campaign = campaignMap.get(row.campaign_id);
+  const resolveMediaUrl = async (rawValue: string): Promise<string> => {
+    const value = rawValue.trim();
+    const storagePrefix = "storage://creator-content/";
+    if (!value.startsWith(storagePrefix)) return value;
+
+    const filePath = value.slice(storagePrefix.length);
+    if (!filePath) return value;
+
+    const { data, error } = await supabase.storage.from("creator-content").createSignedUrl(filePath, 60 * 60 * 24 * 7);
+    if (error || !data?.signedUrl) {
+      return value;
+    }
+    return data.signedUrl;
+  };
+
+  const submissionRows = rows ?? [];
+  const mapped = await Promise.all(submissionRows.map(async (row) => {
+    const campaign = row.campaign_id ? campaignMap.get(row.campaign_id) : undefined;
+    const rawMediaUrls = Array.isArray(row.media_urls) ? row.media_urls.map((url) => String(url)) : [];
+    const mediaUrls = await Promise.all(rawMediaUrls.map((url) => resolveMediaUrl(url)));
+
     return {
       id: row.id,
       campaignId: row.campaign_id,
-      campaignTitle: campaign?.title ?? "Campaign",
-      brandName: brandMap.get(campaign?.brand_id ?? "") ?? "Brand",
+      campaignTitle: campaign?.title ?? "Direct upload",
+      brandName: brandMap.get(campaign?.brand_id ?? "") ?? "",
       title: row.title ?? "Untitled submission",
       caption: row.caption ?? "",
-      mediaUrls: Array.isArray(row.media_urls) ? row.media_urls.map((url) => String(url)) : [],
+      mediaUrls,
       submittedAt: row.submitted_at,
       status: row.status ?? "submitted",
     };
+  }));
+
+  return mapped;
+};
+
+export const uploadCreatorSubmissionFile = async (creatorId: string, file: File): Promise<string> => {
+  if (!supabase) throw new Error("Supabase is not configured.");
+
+  const fileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const filePath = `${creatorId}/${Date.now()}-${fileName}`;
+
+  const { error } = await supabase.storage.from("creator-content").upload(filePath, file, {
+    upsert: false,
+    contentType: file.type || undefined,
   });
+  if (error) throw error;
+
+  return `storage://creator-content/${filePath}`;
 };
 
 export const createCreatorContentSubmission = async (
   creatorId: string,
-  campaignId: string,
+  campaignId: string | null,
   title: string,
   caption: string,
   mediaUrls: string[],
@@ -1055,7 +1091,7 @@ export const createCreatorContentSubmission = async (
   const { error } = await supabase.from("content_submissions").insert({
     campaign_id: campaignId,
     creator_id: creatorId,
-    title: title.trim() || "Campaign submission",
+    title: title.trim() || "Content submission",
     caption: caption.trim() || null,
     media_urls: sanitizedMediaUrls,
     status: "submitted",

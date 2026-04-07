@@ -567,7 +567,7 @@ execute function public.set_updated_at();
 
 create table if not exists public.content_submissions (
   id uuid primary key default gen_random_uuid(),
-  campaign_id uuid not null references public.campaigns(id) on delete cascade,
+  campaign_id uuid references public.campaigns(id) on delete cascade,
   creator_id uuid not null references public.profiles(id) on delete cascade,
   title text,
   caption text,

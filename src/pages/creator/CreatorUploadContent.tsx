@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import CreatorSidebar from "@/components/layout/CreatorSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,13 +9,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Upload, Image, Video, Flame, FileQuestion } from "lucide-react";
+import { Upload, Image, Video, Flame } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   getCurrentCreatorContext,
   fetchCreatorSubmissionCampaignOptions,
   fetchCreatorContentSubmissions,
   createCreatorContentSubmission,
+  uploadCreatorSubmissionFile,
   type CreatorSubmissionCampaignOption,
   type CreatorContentSubmissionItem,
 } from "@/lib/creator-api";
@@ -25,6 +26,9 @@ const statusColors: Record<string, string> = {
   pending: "bg-warning/10 text-warning",
   rejected: "bg-destructive/10 text-destructive",
 };
+
+const DIRECT_UPLOAD_VALUE = "__direct_upload__";
+const allowedUploadTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "video/mp4"];
 
 const CreatorUploadContent = () => {
   const { toast } = useToast();
@@ -36,10 +40,11 @@ const CreatorUploadContent = () => {
   const [campaigns, setCampaigns] = useState<CreatorSubmissionCampaignOption[]>([]);
   const [submissions, setSubmissions] = useState<CreatorContentSubmissionItem[]>([]);
 
-  const [selectedCampaign, setSelectedCampaign] = useState("");
+  const [selectedCampaign, setSelectedCampaign] = useState(DIRECT_UPLOAD_VALUE);
   const [contentType, setContentType] = useState("video");
   const [title, setTitle] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [caption, setCaption] = useState("");
 
   useEffect(() => {
@@ -55,7 +60,6 @@ const CreatorUploadContent = () => {
         ]);
         setCampaigns(camps);
         setSubmissions(subs);
-        if (camps.length > 0) setSelectedCampaign(camps[0].id);
       } finally {
         setIsLoading(false);
       }
@@ -63,18 +67,70 @@ const CreatorUploadContent = () => {
     load();
   }, []);
 
-  const handleSubmit = async () => {
-    if (!selectedCampaign || !title.trim() || !mediaUrl.trim()) {
-      toast({ title: "Missing fields", description: "Please fill campaign, title, and media URL.", variant: "destructive" });
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    if (!file) {
+      setSelectedFile(null);
       return;
     }
+
+    if (!allowedUploadTypes.includes(file.type)) {
+      toast({
+        title: "Unsupported file type",
+        description: "Upload JPG, PNG, WEBP, GIF, or MP4 files only.",
+        variant: "destructive",
+      });
+      event.target.value = "";
+      setSelectedFile(null);
+      return;
+    }
+
+    if (file.size > 100 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Maximum file size is 100MB.",
+        variant: "destructive",
+      });
+      event.target.value = "";
+      setSelectedFile(null);
+      return;
+    }
+
+    setSelectedFile(file);
+  };
+
+  const handleSubmit = async () => {
+    if (!title.trim()) {
+      toast({ title: "Missing fields", description: "Please add a title.", variant: "destructive" });
+      return;
+    }
+
+    if (!mediaUrl.trim() && !selectedFile) {
+      toast({ title: "Missing media", description: "Please add a media URL or upload a file.", variant: "destructive" });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      await createCreatorContentSubmission(creatorId, selectedCampaign, title.trim(), caption.trim(), [mediaUrl.trim()]);
+      const submissionMediaUrls: string[] = [];
+
+      if (mediaUrl.trim()) {
+        submissionMediaUrls.push(mediaUrl.trim());
+      }
+
+      if (selectedFile) {
+        const uploadedMediaRef = await uploadCreatorSubmissionFile(creatorId, selectedFile);
+        submissionMediaUrls.push(uploadedMediaRef);
+      }
+
+      const campaignId = selectedCampaign === DIRECT_UPLOAD_VALUE ? null : selectedCampaign;
+      await createCreatorContentSubmission(creatorId, campaignId, title.trim(), caption.trim(), submissionMediaUrls);
       toast({ title: "Submitted!", description: "Your content has been submitted for review." });
       setTitle("");
       setMediaUrl("");
+      setSelectedFile(null);
       setCaption("");
+      setSelectedCampaign(DIRECT_UPLOAD_VALUE);
       const updated = await fetchCreatorContentSubmissions(creatorId);
       setSubmissions(updated);
     } catch {
@@ -129,19 +185,14 @@ const CreatorUploadContent = () => {
               <div className="space-y-3">
                 {[1, 2, 3].map((n) => <Skeleton key={n} className="h-10 w-full" />)}
               </div>
-            ) : campaigns.length === 0 ? (
-              <div className="rounded-lg border border-dashed p-8 text-center">
-                <FileQuestion className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                <p className="text-sm font-medium text-muted-foreground">No active campaigns yet</p>
-                <p className="text-xs text-muted-foreground/70 mt-1">Accept a brand invitation or bid on a project to unlock content submission</p>
-              </div>
             ) : (
               <>
                 <div>
-                  <Label>Campaign</Label>
+                  <Label>Campaign (Optional)</Label>
                   <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
                     <SelectTrigger><SelectValue placeholder="Select campaign" /></SelectTrigger>
                     <SelectContent>
+                      <SelectItem value={DIRECT_UPLOAD_VALUE}>Direct upload (No campaign)</SelectItem>
                       {campaigns.map((c) => (
                         <SelectItem key={c.id} value={c.id}>{c.title} — {c.brandName}</SelectItem>
                       ))}
@@ -163,8 +214,17 @@ const CreatorUploadContent = () => {
                   <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="My Experience with Align Platform" />
                 </div>
                 <div>
-                  <Label>Social Media Link / Media URL</Label>
+                  <Label>Social Media Link / Media URL (Optional)</Label>
                   <Input value={mediaUrl} onChange={(e) => setMediaUrl(e.target.value)} placeholder="https://instagram.com/p/example123" />
+                </div>
+                <div>
+                  <Label>Upload File (Image or MP4)</Label>
+                  <Input type="file" accept="image/*,video/mp4" onChange={handleFileChange} />
+                  {selectedFile ? (
+                    <p className="text-xs text-muted-foreground mt-1">Selected: {selectedFile.name}</p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground mt-1">You can upload JPG, PNG, WEBP, GIF, or MP4 files up to 100MB.</p>
+                  )}
                 </div>
                 <div>
                   <Label>Caption / Description</Label>
@@ -193,7 +253,7 @@ const CreatorUploadContent = () => {
                       <Video className="h-5 w-5 text-primary shrink-0" />
                       <div className="min-w-0">
                         <p className="font-medium text-sm truncate">{s.title}</p>
-                        <p className="text-xs text-muted-foreground">{s.campaignTitle} · {s.submittedAt}</p>
+                        <p className="text-xs text-muted-foreground">{s.campaignTitle}{s.brandName ? ` — ${s.brandName}` : ""} · {s.submittedAt}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 pl-8 sm:pl-0">
