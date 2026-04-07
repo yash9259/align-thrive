@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, FolderOpen, Flame, MessageSquare, User, Upload, LogOut, MailOpen, History, Users, Building2 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
@@ -25,6 +25,7 @@ const CreatorSidebar = () => {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const navigate = useNavigate();
   const [creatorName, setCreatorName] = useState("Creator");
   const [isVerified, setIsVerified] = useState(false);
   const [chilliesBalance, setChilliesBalance] = useState(0);
@@ -53,8 +54,9 @@ const CreatorSidebar = () => {
     return isSectionRoot ? location.pathname === url : location.pathname === url || location.pathname.startsWith(`${url}/`);
   };
 
-  const handleLogout = () => {
-    void signOutAndRedirect("/login");
+  const handleLogout = async () => {
+    await signOutAndRedirect();
+    navigate("/login", { replace: true });
   };
 
   return (

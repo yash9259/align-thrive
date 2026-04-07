@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Users, Megaphone, CreditCard, MessageSquare, BarChart3, Flame, LogOut, FileCheck } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
@@ -20,14 +20,16 @@ const AdminSidebar = () => {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isItemActive = (url: string) => {
     const isSectionRoot = url.split("/").filter(Boolean).length === 1;
     return isSectionRoot ? location.pathname === url : location.pathname === url || location.pathname.startsWith(`${url}/`);
   };
 
-  const handleLogout = () => {
-    void signOutAndRedirect("/login");
+  const handleLogout = async () => {
+    await signOutAndRedirect();
+    navigate("/login", { replace: true });
   };
 
   return (

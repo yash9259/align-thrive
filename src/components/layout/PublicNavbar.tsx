@@ -35,7 +35,7 @@ const PublicNavbar = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <img src="/alignlogo.png" alt="Align logo" className="h-16 w-auto" />
-          <span className="text-xl font-bold tracking-tight">Align</span>
+          <span className="text-xl font-bold tracking-tight"></span>
         </Link>
 
         {/* Desktop nav */}

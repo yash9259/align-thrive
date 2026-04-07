@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Megaphone, Users, MessageSquare, User, Flame, LogOut, Building2 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
@@ -21,6 +21,7 @@ const BrandSidebar = () => {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const navigate = useNavigate();
   const [companyName, setCompanyName] = useState("Brand");
 
   const isItemActive = (url: string) => {
@@ -43,8 +44,9 @@ const BrandSidebar = () => {
 
   const sidebarLabel = useMemo(() => companyName || "Brand", [companyName]);
 
-  const handleLogout = () => {
-    void signOutAndRedirect("/login");
+  const handleLogout = async () => {
+    await signOutAndRedirect();
+    navigate("/login", { replace: true });
   };
 
   return (

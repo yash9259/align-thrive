@@ -19,7 +19,7 @@ const clearSupabaseAuthStorage = () => {
   removeSupabaseKeys(window.sessionStorage);
 };
 
-export const signOutAndRedirect = async (redirectPath = "/login") => {
+export const signOutAndRedirect = async (redirectPath?: string) => {
   try {
     if (supabase) {
       await supabase.auth.signOut({ scope: "global" });
@@ -30,7 +30,8 @@ export const signOutAndRedirect = async (redirectPath = "/login") => {
 
   clearSupabaseAuthStorage();
 
-  if (typeof window !== "undefined") {
-    window.location.replace(redirectPath);
+  if (typeof window !== "undefined" && redirectPath) {
+    window.history.replaceState({}, "", redirectPath);
+    window.dispatchEvent(new PopStateEvent("popstate"));
   }
 };

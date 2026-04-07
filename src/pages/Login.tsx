@@ -25,6 +25,64 @@ const Login = () => {
     return "/";
   };
 
+  const resolveUserRole = async (
+    userId: string,
+    metadataRole?: string,
+    metadataCompanyName?: string,
+  ): Promise<"admin" | "brand" | "creator"> => {
+    if (!supabase) return "creator";
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const profileRole = profile?.role as string | undefined;
+    if (profileRole === "admin") {
+      return "admin";
+    }
+
+    if (profileRole === "brand") {
+      return profileRole;
+    }
+
+    const { data: brandProfile } = await supabase
+      .from("brand_profiles")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (brandProfile) {
+      await supabase
+        .from("profiles")
+        .upsert({ id: userId, role: "brand" }, { onConflict: "id" });
+      return "brand";
+    }
+
+    if (metadataRole === "brand") {
+      await supabase
+        .from("profiles")
+        .upsert({ id: userId, role: "brand" }, { onConflict: "id" });
+
+      await supabase
+        .from("brand_profiles")
+        .upsert({ id: userId, company_name: metadataCompanyName || "Brand" }, { onConflict: "id" });
+
+      return "brand";
+    }
+
+    if (metadataRole === "admin") {
+      return "admin";
+    }
+
+    if (profileRole === "creator") {
+      return "creator";
+    }
+
+    return "creator";
+  };
+
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) return;
 
@@ -35,13 +93,9 @@ const Login = () => {
       const session = sessionData.session;
       if (!active || !session?.user) return;
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", session.user.id)
-        .maybeSingle();
-
-      const role = (profile?.role as string | undefined) ?? (session.user.user_metadata?.role as string | undefined) ?? "creator";
+      const metadataRole = session.user.user_metadata?.role as string | undefined;
+      const metadataCompanyName = session.user.user_metadata?.company_name as string | undefined;
+      const role = await resolveUserRole(session.user.id, metadataRole, metadataCompanyName);
 
       if (role === "creator") {
         try {
@@ -122,20 +176,9 @@ const Login = () => {
         return;
       }
 
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", userId)
-        .maybeSingle();
-
-      if (profileError) {
-        toast({ title: "Profile lookup failed", description: profileError.message, variant: "destructive" });
-        return;
-      }
-
-      const roleFromProfile = profile?.role as string | undefined;
       const roleFromMetadata = data.user.user_metadata?.role as string | undefined;
-      const finalRole = roleFromProfile ?? roleFromMetadata ?? "creator";
+      const companyNameFromMetadata = data.user.user_metadata?.company_name as string | undefined;
+      const finalRole = await resolveUserRole(userId, roleFromMetadata, companyNameFromMetadata);
 
       toast({ title: "Welcome back", description: "Signed in successfully." });
       navigate(routeByRole(finalRole));
@@ -179,8 +222,8 @@ const Login = () => {
               <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">or continue with</span></div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="w-full" disabled={isOAuthSubmitting} onClick={() => void handleOAuthSignIn("google")}>Google + YouTube</Button>
-              <Button variant="outline" className="w-full" disabled={isOAuthSubmitting} onClick={() => void handleOAuthSignIn("facebook")}>Facebook + Instagram</Button>
+              <Button variant="outline" className="w-full" disabled={isOAuthSubmitting} onClick={() => void handleOAuthSignIn("google")}>Google</Button>
+              <Button variant="outline" className="w-full" disabled={isOAuthSubmitting} onClick={() => void handleOAuthSignIn("facebook")}>Facebook</Button>
             </div>
             <p className="text-center text-sm text-muted-foreground">
               Don't have an account? <Link to="/register" className="font-medium text-primary hover:underline">Sign up</Link>

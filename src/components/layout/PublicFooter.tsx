@@ -7,7 +7,7 @@ const PublicFooter = () => (
         <div>
           <div className="mb-4 flex items-center gap-2">
             <img src="/alignlogo.png" alt="Align logo" className="h-16 w-auto" />
-            <span className="text-lg font-bold">Align</span>
+            <span className="text-lg font-bold"></span>
           </div>
           <p className="text-sm text-muted-foreground">Where Brands & Creators align to grow together.</p>
         </div>
