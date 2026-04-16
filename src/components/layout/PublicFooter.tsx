@@ -15,6 +15,7 @@ const PublicFooter = () => (
           <h4 className="mb-3 text-sm font-semibold">Platform</h4>
           <div className="flex flex-col gap-2">
             <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground">About Us</Link>
+            <Link to="/contact-us" className="text-sm text-muted-foreground hover:text-foreground">Contact Us</Link>
             <Link to="/register" className="text-sm text-muted-foreground hover:text-foreground">Join as Brand</Link>
             <Link to="/register" className="text-sm text-muted-foreground hover:text-foreground">Join as Creator</Link>
           </div>
