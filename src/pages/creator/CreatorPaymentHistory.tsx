@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Flame, CheckCircle, Clock, CreditCard, Smartphone, Wallet, ArrowLeft, ShoppingBag } from "lucide-react";
+import { Flame, CheckCircle, Clock, CreditCard, Smartphone, Wallet, ArrowLeft, ShoppingBag, Building2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   getCurrentCreatorContext,
@@ -17,12 +17,14 @@ const methodIcons: Record<string, React.ReactNode> = {
   card: <CreditCard className="h-4 w-4" />,
   upi: <Smartphone className="h-4 w-4" />,
   paypal: <Wallet className="h-4 w-4" />,
+  bank: <Building2 className="h-4 w-4" />,
 };
 
 const methodLabels: Record<string, string> = {
   card: "Card",
   upi: "UPI",
   paypal: "PayPal",
+  bank: "Bank Transfer",
 };
 
 const CreatorPaymentHistory = () => {

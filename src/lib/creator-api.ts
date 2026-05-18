@@ -176,7 +176,7 @@ export type CreatorPurchaseHistoryItem = {
   date: string;
   chillies: number;
   price: string;
-  method: "card" | "upi" | "paypal";
+  method: "card" | "upi" | "paypal" | "bank";
   badge: string;
   status: "completed";
 };
@@ -1102,7 +1102,7 @@ export const createCreatorContentSubmission = async (
 const parsePurchaseRef = (refType: string | null) => {
   const parts = (refType ?? "").split(":");
   return {
-    method: (parts[1] as "card" | "upi" | "paypal" | undefined) ?? "card",
+    method: (parts[1] as "card" | "upi" | "paypal" | "bank" | undefined) ?? "card",
     price: parts[2] ?? "$0",
     badge: parts[3] ? decodeURIComponent(parts[3]) : "Active badge",
   };
@@ -1140,7 +1140,7 @@ export const purchaseCreatorChillies = async (
   chillies: number,
   price: string,
   badge: string,
-  method: "card" | "upi" | "paypal",
+  method: "card" | "upi" | "paypal" | "bank",
 ): Promise<void> => {
   if (!supabase) throw new Error("Supabase is not configured.");
 
@@ -1471,4 +1471,64 @@ export const syncCreatorSocialMetricsFromSession = async (
   }
 
   return result;
+};
+
+export type CreatorWalletData = {
+  availableBalance: number;
+  totalEarnings: number;
+  totalWithdrawn: number;
+  recentTransactions: Array<{ id: string; date: string; amount: number; type: "earning" | "withdrawal"; status: string }>;
+};
+
+export const fetchCreatorWalletData = async (creatorId: string): Promise<CreatorWalletData> => {
+  if (!supabase) throw new Error("Supabase is not configured.");
+
+  const { data: rows, error } = await supabase
+    .from("payments")
+    .select("id, amount, status, created_at")
+    .eq("creator_id", creatorId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  let totalEarnings = 0;
+  let totalWithdrawn = 0;
+  const recentTransactions: CreatorWalletData["recentTransactions"] = [];
+
+  (rows ?? []).forEach((row) => {
+    const amount = Number(row.amount ?? 0);
+    const date = new Date(row.created_at).toLocaleDateString();
+
+    if (amount < 0) {
+      // Negative amount = withdrawal request
+      const wAmount = Math.abs(amount);
+      totalWithdrawn += wAmount;
+      recentTransactions.push({ id: row.id, date, amount: wAmount, type: "withdrawal", status: row.status === "paid" ? "completed" : "pending" });
+    } else if (row.status === "paid") {
+      totalEarnings += amount;
+      recentTransactions.push({ id: row.id, date, amount, type: "earning", status: "completed" });
+    }
+  });
+
+  return {
+    availableBalance: Math.max(0, totalEarnings - totalWithdrawn),
+    totalEarnings,
+    totalWithdrawn,
+    recentTransactions,
+  };
+};
+
+export const requestWithdrawal = async (creatorId: string, amount: number, method: string, details: string): Promise<void> => {
+  if (!supabase) throw new Error("Supabase is not configured.");
+
+  // Store withdrawal as a negative amount with status 'pending'.
+  // This avoids needing extra enum values in the DB schema.
+  const payload = {
+    creator_id: creatorId,
+    amount: -Math.abs(amount),
+    status: "pending",
+  };
+
+  const { error } = await supabase.from("payments").insert(payload);
+  if (error) throw error;
 };

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FolderOpen, Flame, MessageSquare, User, Upload, LogOut, MailOpen, History, Users, Building2 } from "lucide-react";
+import { LayoutDashboard, FolderOpen, Flame, MessageSquare, User, Upload, LogOut, MailOpen, History, Users, Building2, Wallet } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
@@ -14,6 +14,7 @@ export const creatorSidebarItems = [
   { title: "Invitations", url: "/creator/invitations", icon: MailOpen },
   { title: "Upload Content", url: "/creator/upload", icon: Upload },
   { title: "Buy Chillies", url: "/creator/buy-chillies", icon: Flame },
+  { title: "Wallet", url: "/creator/wallet", icon: Wallet },
   { title: "Payment History", url: "/creator/payment-history", icon: History },
   { title: "Creator Community", url: "/creator/community", icon: Users },
   { title: "Company Community", url: "/creator/company-community", icon: Building2 },

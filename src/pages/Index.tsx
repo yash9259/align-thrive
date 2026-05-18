@@ -54,11 +54,14 @@ const Index = () => {
                     Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>
-                  <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-base font-semibold border-2">
-                    <Play className="mr-2 h-4 w-4" /> How It Works
-                  </Button>
-                </button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="rounded-full px-8 h-12 text-base font-semibold border-2"
+                  onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  <Play className="mr-2 h-4 w-4" /> How It Works
+                </Button>
               </motion.div>
 
               {/* Trust row */}
@@ -308,7 +311,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid gap-6 lg:grid-cols-2 max-w-5xl mx-auto">
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-              <Link to="/brand" className="block group">
+              <div className="block group h-full">
                 <div className="rounded-xl border border-border/50 bg-card p-8 lg:p-10 h-full hover:border-primary/25 hover:shadow-xl transition-all duration-300 hover-lift">
                   <p className="text-xs uppercase tracking-widest text-primary font-semibold mb-4">For Brands</p>
                   <h3 className="text-2xl font-display font-bold mb-3">Find the Right Creators, Fast</h3>
@@ -323,7 +326,7 @@ const Index = () => {
                       loading="lazy"
                     />
                   </div>
-                  <ul className="space-y-2.5 mb-8">
+                  <ul className="space-y-2.5">
                     {["Access verified creators", "Merit-based matching via RACK", "Built-in campaign analytics", "Secure messaging & contracts"].map((item) => (
                       <li key={item} className="flex items-center gap-2.5 text-sm">
                         <CheckCircle className="h-4 w-4 text-primary shrink-0" />
@@ -331,15 +334,12 @@ const Index = () => {
                       </li>
                     ))}
                   </ul>
-                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
-                    View Brand Dashboard <ArrowRight className="h-4 w-4" />
-                  </span>
                 </div>
-              </Link>
+              </div>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.1, duration: 0.6 }} viewport={{ once: true }}>
-              <Link to="/creator" className="block group">
+              <div className="block group h-full">
                 <div className="rounded-xl border border-border/50 bg-card p-8 lg:p-10 h-full hover:border-accent/25 hover:shadow-xl transition-all duration-300 hover-lift">
                   <p className="text-xs uppercase tracking-widest text-accent font-semibold mb-4">For Creators</p>
                   <h3 className="text-2xl font-display font-bold mb-3">Get Seen. Get Hired. Get Paid.</h3>
@@ -354,7 +354,7 @@ const Index = () => {
                       loading="lazy"
                     />
                   </div>
-                  <ul className="space-y-2.5 mb-8">
+                  <ul className="space-y-2.5">
                     {["Free to apply — always", "Chillies boost your ranking", "Build your RACK reputation", "Earn through brand campaigns"].map((item) => (
                       <li key={item} className="flex items-center gap-2.5 text-sm">
                         <CheckCircle className="h-4 w-4 text-accent shrink-0" />
@@ -362,11 +362,8 @@ const Index = () => {
                       </li>
                     ))}
                   </ul>
-                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-accent group-hover:gap-3 transition-all">
-                    View Creator Dashboard <ArrowRight className="h-4 w-4" />
-                  </span>
                 </div>
-              </Link>
+              </div>
             </motion.div>
           </div>
         </div>

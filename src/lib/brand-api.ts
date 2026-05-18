@@ -1084,3 +1084,17 @@ export const respondToBrandCommunityRequest = async (
     await sendBrandAcceptanceMessage(brandId, row.requester_id);
   }
 };
+
+export const payCreator = async (brandId: string, campaignId: string, creatorId: string, amount: number): Promise<void> => {
+  if (!supabase) throw new Error("Supabase is not configured.");
+
+  const payload = {
+    brand_id: brandId,
+    creator_id: creatorId,
+    amount: amount,
+    status: "paid",
+  };
+
+  const { error } = await supabase.from("payments").insert(payload);
+  if (error) throw error;
+};

@@ -20,7 +20,9 @@ const creatorSchema = z.object({
   email: z.string().trim().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
-  address: z.string().trim().min(3, "Address is required").max(300),
+  city: z.string().trim().min(2, "City is required").max(100),
+  state: z.string().trim().min(2, "State is required").max(100),
+  country: z.string().trim().min(2, "Country is required").max(100),
   phone: z.string().trim().min(7, "Phone number is required").max(20),
   promotionFee: z.string().trim().min(1, "Enter your per promotion fee"),
   platforms: z.array(z.string()).min(1, "Select at least one platform"),
@@ -30,14 +32,14 @@ const creatorSchema = z.object({
   snapchatLink: z.string().trim().optional(),
   niche: z.string().trim().min(2, "Enter your content niche"),
   language: z.string().trim().min(2, "Enter your content language"),
-  instagramFollowers: z.string().trim().min(1, "Enter Instagram followers").refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0, "Invalid Instagram followers"),
-  youtubeSubscribers: z.string().trim().min(1, "Enter YouTube subscribers").refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0, "Invalid YouTube subscribers"),
-  tiktokFollowers: z.string().trim().min(1, "Enter TikTok followers").refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0, "Invalid TikTok followers"),
-  snapchatFollowers: z.string().trim().min(1, "Enter Snapchat followers").refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0, "Invalid Snapchat followers"),
-  instagramEngagementRate: z.string().trim().min(1, "Enter Instagram engagement rate").refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 100, "Invalid Instagram engagement rate"),
-  youtubeEngagementRate: z.string().trim().min(1, "Enter YouTube engagement rate").refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 100, "Invalid YouTube engagement rate"),
-  tiktokEngagementRate: z.string().trim().min(1, "Enter TikTok engagement rate").refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 100, "Invalid TikTok engagement rate"),
-  snapchatEngagementRate: z.string().trim().min(1, "Enter Snapchat engagement rate").refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 100, "Invalid Snapchat engagement rate"),
+  instagramFollowers: z.string().trim().optional().refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) >= 0), "Invalid Instagram followers"),
+  youtubeSubscribers: z.string().trim().optional().refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) >= 0), "Invalid YouTube subscribers"),
+  tiktokFollowers: z.string().trim().optional().refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) >= 0), "Invalid TikTok followers"),
+  snapchatFollowers: z.string().trim().optional().refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) >= 0), "Invalid Snapchat followers"),
+  instagramEngagementRate: z.string().trim().optional().refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 100), "Invalid Instagram engagement rate"),
+  youtubeEngagementRate: z.string().trim().optional().refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 100), "Invalid YouTube engagement rate"),
+  tiktokEngagementRate: z.string().trim().optional().refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 100), "Invalid TikTok engagement rate"),
+  snapchatEngagementRate: z.string().trim().optional().refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 100), "Invalid Snapchat engagement rate"),
   nationality: z.string().trim().min(2, "Enter your nationality"),
   audienceNationality: z.string().trim().min(2, "Enter audience nationality"),
   description: z.string().trim().min(10, "Describe your work (min 10 characters)").max(1000),
@@ -75,7 +77,7 @@ const Register = () => {
   // Creator state
   const [creator, setCreator] = useState({
     fullName: "", email: "", password: "", confirmPassword: "",
-    address: "", phone: "", promotionFee: "", platforms: [] as string[],
+    city: "", state: "", country: "", phone: "", promotionFee: "", platforms: [] as string[],
     instagramLink: "", youtubeLink: "", tiktokLink: "", snapchatLink: "",
     niche: "", language: "",
     instagramFollowers: "", youtubeSubscribers: "", tiktokFollowers: "", snapchatFollowers: "",
@@ -175,7 +177,7 @@ const Register = () => {
       bio: creator.description,
       niche: creator.niche,
       languages: [creator.language],
-      location: creator.address,
+      location: `${creator.city}, ${creator.state}, ${creator.country}`,
       instagram_handle: extractHandle(creator.instagramLink),
       youtube_channel: extractHandle(creator.youtubeLink),
       tiktok_handle: extractHandle(creator.tiktokLink),
@@ -246,7 +248,7 @@ const Register = () => {
             bio: creator.description,
             niche: creator.niche,
             language: creator.language,
-            location: creator.address,
+            location: `${creator.city}, ${creator.state}, ${creator.country}`,
             instagram_handle: extractHandle(creator.instagramLink),
             youtube_channel: extractHandle(creator.youtubeLink),
             tiktok_handle: extractHandle(creator.tiktokLink),
@@ -405,10 +407,22 @@ const Register = () => {
                   </div>
                 </div>
 
-                <div>
-                  <Label>Address</Label>
-                  <Input placeholder="Enter your address" value={creator.address} onChange={(e) => updateCreator("address", e.target.value)} />
-                  <FieldError msg={creatorErrors.address} />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <Label>City</Label>
+                    <Input placeholder="e.g. Mumbai" value={creator.city} onChange={(e) => updateCreator("city", e.target.value)} />
+                    <FieldError msg={creatorErrors.city} />
+                  </div>
+                  <div>
+                    <Label>State / Province</Label>
+                    <Input placeholder="e.g. Maharashtra" value={creator.state} onChange={(e) => updateCreator("state", e.target.value)} />
+                    <FieldError msg={creatorErrors.state} />
+                  </div>
+                  <div>
+                    <Label>Country</Label>
+                    <Input placeholder="e.g. India" value={creator.country} onChange={(e) => updateCreator("country", e.target.value)} />
+                    <FieldError msg={creatorErrors.country} />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

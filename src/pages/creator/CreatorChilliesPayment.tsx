@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Flame, CreditCard, Shield, ArrowLeft, CheckCircle, Smartphone, Wallet } from "lucide-react";
+import { Flame, CreditCard, Shield, ArrowLeft, CheckCircle, Smartphone, Wallet, Building2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { getCurrentCreatorContext, purchaseCreatorChillies } from "@/lib/creator-api";
@@ -75,7 +75,7 @@ const CreatorChilliesPayment = () => {
           Number(chillies),
           price,
           badge,
-          paymentMethod as "card" | "upi" | "paypal"
+          paymentMethod as "card" | "upi" | "paypal" | "bank"
         );
         toast({ title: "Payment Successful! 🎉", description: `${chillies} Chillies have been added to your account.` });
         navigate("/creator/buy-chillies");
@@ -143,7 +143,7 @@ const CreatorChilliesPayment = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <Tabs value={paymentMethod} onValueChange={setPaymentMethod} className="w-full">
-              <TabsList className="w-full grid grid-cols-3">
+              <TabsList className="w-full grid grid-cols-4">
                 <TabsTrigger value="card" className="gap-2 text-xs sm:text-sm">
                   <CreditCard className="h-4 w-4" /> Card
                 </TabsTrigger>
@@ -152,6 +152,9 @@ const CreatorChilliesPayment = () => {
                 </TabsTrigger>
                 <TabsTrigger value="paypal" className="gap-2 text-xs sm:text-sm">
                   <Wallet className="h-4 w-4" /> PayPal
+                </TabsTrigger>
+                <TabsTrigger value="bank" className="gap-2 text-xs sm:text-sm">
+                  <Building2 className="h-4 w-4" /> Bank
                 </TabsTrigger>
               </TabsList>
 
@@ -212,6 +215,36 @@ const CreatorChilliesPayment = () => {
                 <div className="space-y-2">
                   <Label htmlFor="paypalEmail">PayPal Email</Label>
                   <Input id="paypalEmail" type="email" placeholder="you@example.com" value={paypalEmail} onChange={(e) => setPaypalEmail(e.target.value)} />
+                </div>
+              </TabsContent>
+
+              {/* Bank Tab */}
+              <TabsContent value="bank" className="space-y-4 mt-4">
+                <div className="rounded-lg border border-border/50 bg-muted/30 p-4 text-center">
+                  <Building2 className="h-10 w-10 text-primary mx-auto mb-3" />
+                  <p className="text-sm font-medium mb-1">Direct Bank Transfer</p>
+                  <p className="text-xs text-muted-foreground mb-4">Transfer the amount to the bank account below and click confirm</p>
+                </div>
+                
+                <div className="grid gap-4 p-4 rounded-lg border border-primary/10 bg-primary/5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-muted-foreground uppercase font-semibold">Bank Name</span>
+                    <span className="text-sm font-medium">State Bank of India</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-muted-foreground uppercase font-semibold">IFSC Code</span>
+                    <span className="text-sm font-bold font-mono">SBIN0050625</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-muted-foreground uppercase font-semibold">Account Number</span>
+                    <span className="text-sm font-bold font-mono">41408136183</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-900/20 rounded-lg">
+                  <p className="text-[10px] sm:text-xs text-yellow-800 dark:text-yellow-200">
+                    <strong>Note:</strong> Chillies will be added instantly for demonstration. In a production environment, this would require manual verification.
+                  </p>
                 </div>
               </TabsContent>
             </Tabs>

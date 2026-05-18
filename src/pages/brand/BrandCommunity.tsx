@@ -14,6 +14,15 @@ import {
   type BrandCommunityMember,
 } from "@/lib/brand-api";
 
+const formatLocation = (loc: string) => {
+  if (!loc) return "";
+  const parts = loc.split(",").map(p => p.trim());
+  if (parts.length >= 4) return parts.slice(1, 3).join(", ");
+  if (parts.length === 3) return parts.slice(0, 2).join(", ");
+  if (parts.length === 2 && parts[0].toLowerCase().includes("street")) return parts[1];
+  return parts.length >= 2 ? parts.slice(0, 2).join(", ") : loc;
+};
+
 const getInitials = (value: string) =>
   value
     .split(" ")
@@ -173,7 +182,7 @@ const BrandCommunity = () => {
                     {member.isVerified && <Badge className="bg-success/10 text-success">Verified</Badge>}
                     <Badge variant="outline">{member.headline}</Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{member.location}</p>
+                  <p className="text-sm text-muted-foreground">{formatLocation(member.location)}</p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">

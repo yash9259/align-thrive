@@ -15,6 +15,7 @@ import {
   inviteCreatorForCampaign,
   updateContentSubmissionStatus,
   updateBidStatus,
+  payCreator,
   type BrandCampaignDetailsData,
   type BrandCampaignInvitation,
   type BrandCampaignContentSubmission,
@@ -49,6 +50,7 @@ const BrandCampaignDetails = () => {
   const [companyName, setCompanyName] = useState("Your Brand");
   const [userInitials, setUserInitials] = useState("BR");
   const [isLoading, setIsLoading] = useState(true);
+  const [paidCreators, setPaidCreators] = useState<Set<string>>(new Set());
 
   const load = async () => {
     if (!id) {
@@ -139,6 +141,27 @@ const BrandCampaignDetails = () => {
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unable to update submission.";
       toast({ title: "Review failed", description: message, variant: "destructive" });
+    }
+  };
+
+  const onPayCreator = async (creatorId: string) => {
+    if (!id || !brandId) return;
+    
+    const creatorBid = bids.find(b => b.creatorId === creatorId && b.status === "accepted");
+    const amount = creatorBid ? parseFloat(creatorBid.bid.replace('$', '').replace(/,/g, '')) : 0;
+    
+    if (!amount || amount <= 0) {
+      toast({ title: "Payment error", description: "Could not determine the payment amount from an accepted bid. Ensure the bid is marked as accepted first.", variant: "destructive" });
+      return;
+    }
+
+    try {
+      await payCreator(brandId, id, creatorId, amount);
+      setPaidCreators(new Set(paidCreators).add(creatorId));
+      toast({ title: "Payment sent", description: `Successfully paid $${amount} to the creator's wallet.` });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to process payment.";
+      toast({ title: "Payment failed", description: message, variant: "destructive" });
     }
   };
 
@@ -347,6 +370,11 @@ const BrandCampaignDetails = () => {
                       <Button size="sm" className="gradient-primary text-primary-foreground" onClick={() => void onUpdateSubmission(submission.id, "approved")}>
                         <UserCheck className="mr-1 h-3 w-3" /> Approve
                       </Button>
+                      {submission.status === "approved" && (
+                        <Button size="sm" variant="default" className="bg-success text-success-foreground hover:bg-success/90" onClick={() => void onPayCreator(submission.creatorId)} disabled={paidCreators.has(submission.creatorId)}>
+                          <DollarSign className="mr-1 h-3 w-3" /> {paidCreators.has(submission.creatorId) ? "Paid" : "Pay Creator"}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}
