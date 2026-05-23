@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { createNotification } from "./notifications";
 
 export type BrandContext = {
   userId: string;
@@ -554,6 +555,42 @@ export const updateBidStatus = async (bidId: string, status: "shortlisted" | "ac
   if (!supabase) throw new Error("Supabase is not configured.");
   const { error } = await supabase.from("bids").update({ status }).eq("id", bidId);
   if (error) throw error;
+
+  try {
+    const { data: bidData } = await supabase
+      .from("bids")
+      .select("creator_id, campaign_id, campaigns(title)")
+      .eq("id", bidId)
+      .maybeSingle();
+
+    if (bidData) {
+      const campaignTitle = (bidData.campaigns as any)?.title || "Campaign";
+      const creatorId = bidData.creator_id;
+      let body = "";
+      let title = "";
+
+      if (status === "shortlisted") {
+        title = "Shortlisted!";
+        body = `Your application for "${campaignTitle}" has been shortlisted!`;
+      } else if (status === "accepted") {
+        title = "Application Accepted";
+        body = `Congratulations! Your application for "${campaignTitle}" has been accepted!`;
+      } else {
+        title = "Application Status";
+        body = `Your application for "${campaignTitle}" was not selected.`;
+      }
+
+      await createNotification({
+        userId: creatorId,
+        type: "bid",
+        title,
+        body,
+        data: { campaignId: bidData.campaign_id, bidId }
+      });
+    }
+  } catch (err) {
+    console.error("Failed to trigger bid status notification:", err);
+  }
 };
 
 export const fetchCampaignInvitations = async (campaignId: string): Promise<BrandCampaignInvitation[]> => {
@@ -641,6 +678,42 @@ export const updateContentSubmissionStatus = async (submissionId: string, status
 
   const { error } = await supabase.from("content_submissions").update(payload).eq("id", submissionId);
   if (error) throw error;
+
+  try {
+    const { data: subData } = await supabase
+      .from("content_submissions")
+      .select("creator_id, campaign_id, title, campaigns(title)")
+      .eq("id", submissionId)
+      .maybeSingle();
+
+    if (subData) {
+      const campaignTitle = (subData.campaigns as any)?.title || "Campaign";
+      const subTitle = subData.title || "Content submission";
+      let body = "";
+      let title = "";
+
+      if (status === "approved") {
+        title = "Submission Approved!";
+        body = `Your content submission "${subTitle}" for campaign "${campaignTitle}" has been approved.`;
+      } else if (status === "revision_requested") {
+        title = "Revision Requested";
+        body = `The brand requested revisions on your submission "${subTitle}" for campaign "${campaignTitle}".`;
+      } else {
+        title = "Submission Rejected";
+        body = `Your submission "${subTitle}" for campaign "${campaignTitle}" was rejected.`;
+      }
+
+      await createNotification({
+        userId: subData.creator_id,
+        type: "system",
+        title,
+        body,
+        data: { campaignId: subData.campaign_id, submissionId }
+      });
+    }
+  } catch (err) {
+    console.error("Failed to trigger content submission notification:", err);
+  }
 };
 
 export const inviteCreatorForCampaign = async (campaignId: string, creatorId: string, brandId: string, message: string) => {
@@ -668,6 +741,25 @@ export const inviteCreatorForCampaign = async (campaignId: string, creatorId: st
     status: "pending",
   });
   if (error) throw error;
+
+  try {
+    const { data: campaignData } = await supabase
+      .from("campaigns")
+      .select("title")
+      .eq("id", campaignId)
+      .maybeSingle();
+    const campaignTitle = campaignData?.title || "Campaign";
+
+    await createNotification({
+      userId: creatorId,
+      type: "campaign",
+      title: "New Campaign Invitation",
+      body: `You have been invited to apply to: "${campaignTitle}"`,
+      data: { campaignId, message }
+    });
+  } catch (err) {
+    console.error("Failed to trigger invitation notification:", err);
+  }
 };
 
 export const fetchPendingInviteCreatorIds = async (brandId: string, campaignId: string): Promise<string[]> => {
@@ -1097,4 +1189,23 @@ export const payCreator = async (brandId: string, campaignId: string, creatorId:
 
   const { error } = await supabase.from("payments").insert(payload);
   if (error) throw error;
+
+  try {
+    const { data: campaignData } = await supabase
+      .from("campaigns")
+      .select("title")
+      .eq("id", campaignId)
+      .maybeSingle();
+    const campaignTitle = campaignData?.title || "Campaign";
+
+    await createNotification({
+      userId: creatorId,
+      type: "payment",
+      title: "Payment Received",
+      body: `You received a payment of $${amount.toLocaleString()} for campaign "${campaignTitle}".`,
+      data: { campaignId, amount }
+    });
+  } catch (err) {
+    console.error("Failed to trigger payout notification:", err);
+  }
 };

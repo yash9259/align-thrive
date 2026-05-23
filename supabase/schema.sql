@@ -987,3 +987,12 @@ create policy "avatars_auth_upload"
 on storage.objects
 for insert
 with check (bucket_id = 'avatars' and auth.role() = 'authenticated');
+
+-- Enable Realtime for notifications table
+do $$
+begin
+  alter publication supabase_realtime add table public.notifications;
+exception
+  when duplicate_object then null;
+end $$;
+

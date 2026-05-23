@@ -259,12 +259,14 @@ const BrandCampaignDetails = () => {
               {bids.map((c) => (
                 <div key={c.bidId} className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-border/50 p-3 sm:p-4 hover:border-primary/20 transition-colors gap-3">
                   <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground">
+                    <Link to={`/brand/creators/${c.creatorId}`} className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full gradient-primary text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">
                       {c.name.split(" ").map((n) => n[0]).join("")}
-                    </div>
+                    </Link>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-medium text-sm">{c.name}</span>
+                        <Link to={`/brand/creators/${c.creatorId}`} className="font-medium text-sm hover:text-primary hover:underline transition-colors">
+                          {c.name}
+                        </Link>
                         {c.verified && <Badge className="bg-success/10 text-success text-[10px] px-1.5">✓</Badge>}
                         {c.priority && <Badge className="bg-accent/10 text-accent text-[10px] px-1.5"><Flame className="h-2.5 w-2.5 mr-0.5" />Priority</Badge>}
                         <Badge variant="outline" className="text-[10px] px-1.5">{c.status}</Badge>
@@ -303,7 +305,9 @@ const BrandCampaignDetails = () => {
                   <div key={invitation.id} className="rounded-lg border border-border/50 p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="font-medium text-sm">{invitation.creatorName}</p>
+                        <Link to={`/brand/creators/${invitation.creatorId}`} className="font-medium text-sm hover:text-primary hover:underline transition-colors block">
+                          {invitation.creatorName}
+                        </Link>
                         <p className="text-xs text-muted-foreground">{invitation.creatorNiche}</p>
                         <p className="text-xs text-muted-foreground mt-1">{new Date(invitation.createdAt).toLocaleString()}</p>
                       </div>
@@ -339,7 +343,12 @@ const BrandCampaignDetails = () => {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-medium text-sm">{submission.title}</p>
-                        <p className="text-xs text-muted-foreground">by {submission.creatorName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          by{" "}
+                          <Link to={`/brand/creators/${submission.creatorId}`} className="hover:text-primary hover:underline transition-colors">
+                            {submission.creatorName}
+                          </Link>
+                        </p>
                       </div>
                       <Badge variant="secondary" className={
                         submission.status === "approved"

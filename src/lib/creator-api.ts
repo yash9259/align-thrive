@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
+import { createNotification } from "./notifications";
 
 export type CreatorContext = {
   userId: string;
@@ -757,6 +758,36 @@ export const submitCreatorBid = async (creatorId: string, campaignId: string, am
     });
     if (walletError) throw walletError;
   }
+
+  try {
+    const { data: campaignData } = await supabase
+      .from("campaigns")
+      .select("title, brand_id")
+      .eq("id", campaignId)
+      .maybeSingle();
+
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", creatorId)
+      .maybeSingle();
+
+    if (campaignData && profileData) {
+      const campaignTitle = campaignData.title;
+      const brandId = campaignData.brand_id;
+      const creatorName = profileData.full_name;
+
+      await createNotification({
+        userId: brandId,
+        type: "bid",
+        title: "New Campaign Bid",
+        body: `${creatorName} placed a bid of $${amount.toLocaleString()} on your campaign "${campaignTitle}".`,
+        data: { campaignId, creatorId }
+      });
+    }
+  } catch (err) {
+    console.error("Failed to trigger bid submission notification:", err);
+  }
 };
 
 export const fetchCreatorInvitations = async (creatorId: string): Promise<CreatorInvitationItem[]> => {
@@ -840,6 +871,39 @@ export const updateCreatorInvitationStatus = async (creatorId: string, invitatio
     });
 
     if (messageError) throw messageError;
+  }
+
+  try {
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", creatorId)
+      .maybeSingle();
+
+    if (invitation && profileData) {
+      const creatorName = profileData.full_name;
+      const brandId = invitation.brand_id;
+      let campaignTitle = "your campaign";
+      
+      if (invitation.campaign_id) {
+        const { data: campaignRows } = await supabase
+          .from("campaigns")
+          .select("title")
+          .eq("id", invitation.campaign_id)
+          .limit(1);
+        campaignTitle = campaignRows?.[0]?.title ?? campaignTitle;
+      }
+
+      await createNotification({
+        userId: brandId,
+        type: "campaign",
+        title: status === "accepted" ? "Invitation Accepted" : "Invitation Declined",
+        body: `${creatorName} has ${status} your invitation for campaign "${campaignTitle}".`,
+        data: { invitationId, status }
+      });
+    }
+  } catch (err) {
+    console.error("Failed to trigger invitation reply notification:", err);
   }
 };
 
@@ -1097,6 +1161,38 @@ export const createCreatorContentSubmission = async (
     status: "submitted",
   });
   if (error) throw error;
+
+  if (campaignId) {
+    try {
+      const { data: campaignData } = await supabase
+        .from("campaigns")
+        .select("title, brand_id")
+        .eq("id", campaignId)
+        .maybeSingle();
+
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", creatorId)
+        .maybeSingle();
+
+      if (campaignData && profileData) {
+        const campaignTitle = campaignData.title;
+        const brandId = campaignData.brand_id;
+        const creatorName = profileData.full_name;
+
+        await createNotification({
+          userId: brandId,
+          type: "campaign",
+          title: "New Content Submission",
+          body: `${creatorName} submitted new content for review in campaign "${campaignTitle}".`,
+          data: { campaignId, creatorId }
+        });
+      }
+    } catch (err) {
+      console.error("Failed to trigger submission notification:", err);
+    }
+  }
 };
 
 const parsePurchaseRef = (refType: string | null) => {

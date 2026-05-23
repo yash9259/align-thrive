@@ -30,8 +30,11 @@ export const signOutAndRedirect = async (redirectPath?: string) => {
 
   clearSupabaseAuthStorage();
 
-  if (typeof window !== "undefined" && redirectPath) {
-    window.history.replaceState({}, "", redirectPath);
-    window.dispatchEvent(new PopStateEvent("popstate"));
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("isStaticAdmin");
+    if (redirectPath) {
+      window.history.replaceState({}, "", redirectPath);
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    }
   }
 };

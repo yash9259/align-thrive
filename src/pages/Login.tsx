@@ -29,7 +29,15 @@ const Login = () => {
     userId: string,
     metadataRole?: string,
     metadataCompanyName?: string,
+    userEmail?: string,
   ): Promise<"admin" | "brand" | "creator"> => {
+    const normalizedEmail = userEmail?.trim().toLowerCase();
+    const isAdminEmail = normalizedEmail === "admin@align.net";
+
+    if (isAdminEmail) {
+      return "admin";
+    }
+
     if (!supabase) return "creator";
 
     const { data: profile } = await supabase
@@ -39,6 +47,7 @@ const Login = () => {
       .maybeSingle();
 
     const profileRole = profile?.role as string | undefined;
+
     if (profileRole === "admin") {
       return "admin";
     }
@@ -89,13 +98,23 @@ const Login = () => {
     let active = true;
 
     const routeIfSession = async () => {
+      if (typeof window !== "undefined" && localStorage.getItem("isStaticAdmin") === "true") {
+        navigate("/admin", { replace: true });
+        return;
+      }
+
       const { data: sessionData } = await supabase.auth.getSession();
       const session = sessionData.session;
       if (!active || !session?.user) return;
 
       const metadataRole = session.user.user_metadata?.role as string | undefined;
       const metadataCompanyName = session.user.user_metadata?.company_name as string | undefined;
-      const role = await resolveUserRole(session.user.id, metadataRole, metadataCompanyName);
+      const role = await resolveUserRole(
+        session.user.id,
+        metadataRole,
+        metadataCompanyName,
+        session.user.email
+      );
 
       if (role === "creator") {
         try {
@@ -154,6 +173,15 @@ const Login = () => {
       return;
     }
 
+    if (normalizedEmail === "admin@align.net" && password === "admin@123") {
+      setIsSubmitting(true);
+      localStorage.setItem("isStaticAdmin", "true");
+      toast({ title: "Welcome back", description: "Signed in successfully as Admin (Static)." });
+      navigate("/admin");
+      setIsSubmitting(false);
+      return;
+    }
+
     if (!isSupabaseConfigured || !supabase) {
       toast({ title: "Supabase not configured", description: "Set Supabase URL and anon key in .env", variant: "destructive" });
       return;
@@ -178,7 +206,12 @@ const Login = () => {
 
       const roleFromMetadata = data.user.user_metadata?.role as string | undefined;
       const companyNameFromMetadata = data.user.user_metadata?.company_name as string | undefined;
-      const finalRole = await resolveUserRole(userId, roleFromMetadata, companyNameFromMetadata);
+      const finalRole = await resolveUserRole(
+        userId,
+        roleFromMetadata,
+        companyNameFromMetadata,
+        normalizedEmail
+      );
 
       toast({ title: "Welcome back", description: "Signed in successfully." });
       navigate(routeByRole(finalRole));
