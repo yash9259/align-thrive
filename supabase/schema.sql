@@ -426,6 +426,7 @@ create table if not exists public.campaigns (
   description text,
   category text,
   platform text,
+  campaign_type text not null default 'paid',
   budget_min numeric(12,2),
   budget_max numeric(12,2),
   min_followers integer,

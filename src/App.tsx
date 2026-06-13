@@ -16,6 +16,7 @@ import BrandCommunity from "./pages/brand/BrandCommunity";
 import BrandCreatorDetails from "./pages/brand/BrandCreatorDetails";
 import BrandMessages from "./pages/brand/BrandMessages";
 import BrandProfile from "./pages/brand/BrandProfile";
+import BrandProfileView from "./pages/brand/BrandProfileView";
 import CreatorDashboard from "./pages/creator/CreatorDashboard";
 import CreatorProjects from "./pages/creator/CreatorProjects";
 import CreatorProjectDetails from "./pages/creator/CreatorProjectDetails";
@@ -61,6 +62,7 @@ const App = () => (
           <Route path="/brand/creators/:creatorId" element={<BrandCreatorDetails />} />
           <Route path="/brand/messages" element={<BrandMessages />} />
           <Route path="/brand/profile" element={<BrandProfile />} />
+          <Route path="/brand/profile/:brandId" element={<BrandProfileView />} />
           <Route path="/creator" element={<CreatorDashboard />} />
           <Route path="/creator/projects" element={<CreatorProjects />} />
           <Route path="/creator/projects/:id" element={<CreatorProjectDetails />} />

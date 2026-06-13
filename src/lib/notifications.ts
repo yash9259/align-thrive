@@ -8,7 +8,28 @@ export interface CreateNotificationInput {
   title: string;
   body?: string;
   data?: Record<string, any>;
+  email?: string;
 }
+
+const showBrowserNotification = async (title: string, body?: string) => {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+
+  if (Notification.permission === "default") {
+    await Notification.requestPermission().catch(() => undefined);
+  }
+
+  if (Notification.permission === "granted") {
+    new Notification(title, { body: body || "", tag: "align-thrive-notification" });
+  }
+};
+
+const openMailComposer = (email: string, title: string, body?: string) => {
+  if (typeof window === "undefined") return;
+
+  const subject = encodeURIComponent(title || "AlignThrive notification");
+  const message = encodeURIComponent(body || "");
+  window.open(`mailto:${email}?subject=${subject}&body=${message}`, "_blank", "noopener,noreferrer");
+};
 
 /**
  * Creates a notification in the database for the given user.
@@ -32,6 +53,12 @@ export const createNotification = async (input: CreateNotificationInput): Promis
 
     if (error) {
       console.error("Error creating database notification:", error.message);
+      return;
+    }
+
+    void showBrowserNotification(input.title, input.body);
+    if (input.email) {
+      openMailComposer(input.email, input.title, input.body);
     }
   } catch (err) {
     console.error("Failed to run createNotification:", err);

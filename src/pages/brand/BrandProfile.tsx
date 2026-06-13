@@ -166,8 +166,8 @@ const BrandProfile = () => {
                   <th className="pb-3 font-medium">Campaign</th><th className="pb-3 font-medium">Status</th><th className="pb-3 font-medium">Creators</th><th className="pb-3 font-medium">Spent</th>
                 </tr></thead>
                 <tbody>
-                  {profile.campaignHistory.map((c) => (
-                    <tr key={c.name} className="border-b border-border/50 last:border-0">
+                  {profile.campaignHistory.map((c, index) => (
+                    <tr key={`${c.name}-${index}`} className="border-b border-border/50 last:border-0">
                       <td className="py-3 font-medium">{c.name}</td>
                       <td className="py-3"><Badge variant="secondary" className="bg-muted text-muted-foreground">{c.status}</Badge></td>
                       <td className="py-3">{c.creators}</td>

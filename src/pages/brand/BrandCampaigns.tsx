@@ -46,6 +46,7 @@ const emptyForm: BrandCampaignFormInput = {
   description: "",
   category: "General",
   platform: "Instagram",
+  campaignType: "paid",
   budgetMin: 0,
   budgetMax: 0,
   minFollowers: 0,
@@ -65,6 +66,7 @@ const BrandCampaigns = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [form, setForm] = useState<BrandCampaignFormInput>(emptyForm);
   const [deliverablesText, setDeliverablesText] = useState("");
+  const isBarterCampaign = form.campaignType === "barter";
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -108,6 +110,7 @@ const BrandCampaigns = () => {
         description: details.description,
         category: details.category,
         platform: details.platform,
+        campaignType: details.campaignType ?? "paid",
         budgetMin: details.budgetMin ?? 0,
         budgetMax: details.budgetMax ?? 0,
         minFollowers: details.minFollowers ?? 0,
@@ -135,13 +138,15 @@ const BrandCampaigns = () => {
       return;
     }
 
-    if (form.budgetMax < form.budgetMin) {
+    if (!isBarterCampaign && form.budgetMax < form.budgetMin) {
       toast({ title: "Validation", description: "Budget max must be greater than or equal to budget min.", variant: "destructive" });
       return;
     }
 
     const payload: BrandCampaignFormInput = {
       ...form,
+      budgetMin: isBarterCampaign ? 0 : form.budgetMin,
+      budgetMax: isBarterCampaign ? 0 : form.budgetMax,
       deliverables: deliverablesText
         .split("\n")
         .map((item) => item.trim())
@@ -290,28 +295,53 @@ const BrandCampaigns = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="budgetMin">Budget Min (USD)</Label>
-                  <Input
-                    id="budgetMin"
-                    type="number"
-                    min={0}
-                    value={form.budgetMin}
-                    onChange={(e) => setForm((prev) => ({ ...prev, budgetMin: Number(e.target.value) || 0 }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="budgetMax">Budget Max (USD)</Label>
-                  <Input
-                    id="budgetMax"
-                    type="number"
-                    min={0}
-                    value={form.budgetMax}
-                    onChange={(e) => setForm((prev) => ({ ...prev, budgetMax: Number(e.target.value) || 0 }))}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="campaignType">Campaign Type</Label>
+                <select
+                  id="campaignType"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={form.campaignType}
+                  onChange={(e) => {
+                    const nextType = e.target.value as BrandCampaignFormInput["campaignType"];
+                    setForm((prev) => ({
+                      ...prev,
+                      campaignType: nextType,
+                      budgetMin: nextType === "barter" ? 0 : prev.budgetMin,
+                      budgetMax: nextType === "barter" ? 0 : prev.budgetMax,
+                    }));
+                  }}
+                >
+                  <option value="paid">Paid</option>
+                  <option value="barter">Barter</option>
+                  <option value="affiliate">Affiliate</option>
+                </select>
+                <p className="text-xs text-muted-foreground">Choose how this campaign will be compensated. Barter campaigns do not need a budget range.</p>
               </div>
+
+              {!isBarterCampaign && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="budgetMin">Budget Min (USD)</Label>
+                    <Input
+                      id="budgetMin"
+                      type="number"
+                      min={0}
+                      value={form.budgetMin}
+                      onChange={(e) => setForm((prev) => ({ ...prev, budgetMin: Number(e.target.value) || 0 }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="budgetMax">Budget Max (USD)</Label>
+                    <Input
+                      id="budgetMax"
+                      type="number"
+                      min={0}
+                      value={form.budgetMax}
+                      onChange={(e) => setForm((prev) => ({ ...prev, budgetMax: Number(e.target.value) || 0 }))}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">

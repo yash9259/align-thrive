@@ -112,10 +112,14 @@ const BrandCreators = () => {
     return num;
   };
 
+  const normalizeSearchText = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
   const filtered = useMemo(() => {
+    const query = normalizeSearchText(search.trim());
+
     let list = data.filter((c) => {
-      const text = `${c.name} ${c.niche}`.toLowerCase();
-      const searchOk = !search.trim() || text.includes(search.trim().toLowerCase());
+      const text = normalizeSearchText([c.name, c.niche, c.platform, c.followers, c.engagement].join(" "));
+      const searchOk = !query || text.includes(query);
       const categoryOk = category === "all" || c.niche.toLowerCase().includes(category);
 
       const followers = parseFollowers(c.followers);
@@ -231,7 +235,7 @@ const BrandCreators = () => {
             const avg = getRackAvg(c.rack);
             const isAlreadyInvited = pendingInviteCreatorIds.includes(c.id);
             return (
-              <Card key={c.name} className="group hover:shadow-lg hover:border-primary/20 transition-all">
+              <Card key={c.id} className="group hover:shadow-lg hover:border-primary/20 transition-all">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="relative">

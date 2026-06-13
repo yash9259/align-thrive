@@ -1,8 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, Search, Flame, Megaphone, UserCheck, MessageSquare, LucideIcon } from "lucide-react";
+import { Bell, Flame, Megaphone, UserCheck, MessageSquare, LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
@@ -48,6 +47,7 @@ const DashboardLayout = ({ children, sidebar, title, userInitials = "JD", hideMo
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifs, setNotifs] = useState<any[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [profileInitials, setProfileInitials] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -65,6 +65,22 @@ const DashboardLayout = ({ children, sidebar, title, userInitials = "JD", hideMo
         if (!active || !user) return;
 
         setCurrentUserId(user.id);
+
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("full_name, email")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        const profileName = profileData?.full_name || user.user_metadata?.full_name || user.email || "User";
+        const initials = profileName
+          .split(" ")
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0]?.toUpperCase())
+          .join("");
+
+        setProfileInitials(initials || "U");
 
         const { data, error } = await supabase
           .from("notifications")
@@ -188,11 +204,6 @@ const DashboardLayout = ({ children, sidebar, title, userInitials = "JD", hideMo
             {!hideMobileNav && <SidebarTrigger className="inline-flex" />}
             <h1 className="text-lg font-semibold truncate">{title}</h1>
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
-              <div className="relative hidden md:block">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search..." className="w-64 pl-8 h-9" />
-              </div>
-
               {/* Notification Bell */}
               <Popover open={notifOpen} onOpenChange={setNotifOpen}>
                 <PopoverTrigger asChild>
@@ -250,7 +261,7 @@ const DashboardLayout = ({ children, sidebar, title, userInitials = "JD", hideMo
               </Popover>
 
               <Avatar className="h-8 w-8">
-                <AvatarFallback className="text-xs gradient-primary text-primary-foreground">{userInitials}</AvatarFallback>
+                <AvatarFallback className="text-xs gradient-primary text-primary-foreground">{profileInitials || userInitials || "U"}</AvatarFallback>
               </Avatar>
             </div>
           </header>

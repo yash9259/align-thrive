@@ -1289,7 +1289,7 @@ export const fetchCreatorCommunityDirectory = async (
     fetchCommunityRelationRows(creatorId),
     supabase
       .from("profiles")
-      .select("id, full_name, is_verified, role")
+      .select("id, full_name, email, is_verified, role")
       .eq("role", targetRole)
       .neq("id", creatorId)
       .order("full_name", { ascending: true }),
@@ -1344,7 +1344,7 @@ export const fetchCreatorCommunityDirectory = async (
       const details = creatorDetailMap.get(profile.id);
       return {
         id: profile.id,
-        name: profile.full_name,
+        name: profile.full_name?.trim() || profile.email?.split("@")[0]?.trim() || "Creator",
         isVerified: Boolean(profile.is_verified),
         headline: details?.niche || "Creator",
         location: details?.location || "Location not set",

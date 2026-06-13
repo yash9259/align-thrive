@@ -284,8 +284,8 @@ const Register = () => {
       }
 
       toast({
-        title: "Verify your email",
-        description: "Account created. Please verify your email, then sign in.",
+        title: "Account created",
+        description: "You can sign in to continue.",
       });
       navigate("/login");
     } catch (err) {
@@ -337,8 +337,8 @@ const Register = () => {
       }
 
       toast({
-        title: "Verify your email",
-        description: "Account created. Please verify your email, then sign in.",
+        title: "Account created",
+        description: "You can sign in to continue.",
       });
       navigate("/login");
     } catch (err) {

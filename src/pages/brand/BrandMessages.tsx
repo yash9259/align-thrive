@@ -8,6 +8,8 @@ import { Send, Search, ArrowLeft, Phone, Video, PhoneOff, MicOff, VideoOff, Pape
 import { useToast } from "@/hooks/use-toast";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { getCurrentBrandContext } from "@/lib/brand-api";
+import { createNotification } from "@/lib/notifications";
+import { useNavigate } from "react-router-dom";
 
 const defaultConversations: Array<{ name: string; participantId: string; last: string; time: string; unread: number }> = [];
 const CALL_SYSTEM_PREFIX = "__SYS_CALL__";
@@ -89,6 +91,7 @@ const BrandMessages = () => {
   const connectedAtRef = useRef<number | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentUserName, setCurrentUserName] = useState("Brand");
   const [activeCall, setActiveCall] = useState<{ room: string; kind: "audio" | "video" } | null>(null);
@@ -125,6 +128,11 @@ const BrandMessages = () => {
   };
 
   const makeTempId = () => `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  const openCreatorProfile = (creatorId: string) => {
+    if (!creatorId) return;
+    navigate(`/brand/creators/${creatorId}`);
+  };
 
   const sendSignalToDb = async (content: string, metadata?: Record<string, string>) => {
     if (!currentUserId || !selectedParticipant.participantId) return;
@@ -478,6 +486,21 @@ const BrandMessages = () => {
       toast({ title: "Unable to send", description: error.message, variant: "destructive" });
       return false;
     }
+
+    const { data: recipientProfile } = await supabase
+      .from("profiles")
+      .select("email, full_name")
+      .eq("id", selectedParticipant.participantId)
+      .maybeSingle();
+
+    await createNotification({
+      userId: selectedParticipant.participantId,
+      type: "message",
+      title: `New message from ${currentUserName}`,
+      body: `You received a new message from ${currentUserName}.`,
+      email: recipientProfile?.email || undefined,
+      data: { sender_id: currentUserId, receiver_id: selectedParticipant.participantId },
+    });
 
     return true;
   };
@@ -929,7 +952,16 @@ const BrandMessages = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium truncate">{c.name}</span>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        openCreatorProfile(c.participantId);
+                      }}
+                      className="truncate text-left text-sm font-medium text-foreground hover:text-primary hover:underline"
+                    >
+                      {c.name}
+                    </button>
                     <span className="text-[10px] text-muted-foreground shrink-0 ml-2">{c.time}</span>
                   </div>
                   <p className="text-xs text-muted-foreground truncate">{c.last || "No recent message"}</p>
@@ -957,7 +989,16 @@ const BrandMessages = () => {
                     {selectedParticipant.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{selectedParticipant.name}</p>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        openCreatorProfile(selectedParticipant.participantId);
+                      }}
+                      className="truncate text-left text-sm font-medium text-foreground hover:text-primary hover:underline"
+                    >
+                      {selectedParticipant.name}
+                    </button>
                     <p className="text-xs text-success">Online</p>
                   </div>
                 </div>

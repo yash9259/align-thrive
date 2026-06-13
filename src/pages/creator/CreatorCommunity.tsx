@@ -4,7 +4,9 @@ import CreatorSidebar from "@/components/layout/CreatorSidebar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   fetchCreatorCommunityDirectory,
@@ -13,6 +15,8 @@ import {
   sendCreatorCommunityRequest,
   type CreatorCommunityMember,
 } from "@/lib/creator-api";
+
+const normalizeSearchText = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
 
 const formatLocation = (loc: string) => {
   if (!loc) return "";
@@ -28,6 +32,7 @@ const CreatorCommunity = () => {
   const [creatorId, setCreatorId] = useState<string>("");
   const [userInitials, setUserInitials] = useState("CR");
   const [members, setMembers] = useState<CreatorCommunityMember[]>([]);
+  const [search, setSearch] = useState("");
   const [followingCount, setFollowingCount] = useState(0);
   const [incomingCount, setIncomingCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
@@ -109,20 +114,22 @@ const CreatorCommunity = () => {
   );
 
   const displayedMembers = useMemo(() => {
-    if (activeTab === "incoming") {
-      return members.filter((member) => member.status === "incoming");
-    }
+    const query = search.trim().toLowerCase();
 
-    if (activeTab === "following") {
-      return members.filter((member) => member.status === "following");
-    }
+    const byTab = (() => {
+      if (activeTab === "incoming") return members.filter((member) => member.status === "incoming");
+      if (activeTab === "following") return members.filter((member) => member.status === "following");
+      if (activeTab === "requested") return members.filter((member) => member.status === "requested");
+      return members;
+    })();
 
-    if (activeTab === "requested") {
-      return members.filter((member) => member.status === "requested");
-    }
+    if (!query) return byTab;
 
-    return members;
-  }, [activeTab, members]);
+    return byTab.filter((member) => {
+      const haystack = normalizeSearchText([member.name, member.headline, member.location, member.audienceLabel, member.status].join(" "));
+      return haystack.includes(normalizeSearchText(query));
+    });
+  }, [activeTab, members, search]);
 
   return (
     <DashboardLayout sidebar={<CreatorSidebar />} title="Creator Community" userInitials={userInitials}>
@@ -153,6 +160,15 @@ const CreatorCommunity = () => {
             <CardTitle>All Creators</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search creators by name, niche, or location"
+                className="pl-9"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+            </div>
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "all" | "incoming" | "following" | "requested")}>
               <TabsList className="h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0">
                 <TabsTrigger value="all">All ({members.length})</TabsTrigger>

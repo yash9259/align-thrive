@@ -34,6 +34,7 @@ export type BrandCampaignFormInput = {
   description: string;
   category: string;
   platform: string;
+  campaignType: "barter" | "paid" | "affiliate";
   budgetMin: number;
   budgetMax: number;
   minFollowers: number;
@@ -50,6 +51,7 @@ export type BrandCampaignDetailsData = {
   description: string;
   category: string;
   platform: string;
+  campaignType: "barter" | "paid" | "affiliate";
   budgetMin: number | null;
   budgetMax: number | null;
   minFollowers: number | null;
@@ -422,6 +424,7 @@ export const createBrandCampaign = async (brandId: string, input?: Partial<Brand
     description: input?.description?.trim() || "Add your campaign details and publish.",
     category: input?.category?.trim() || "General",
     platform: input?.platform?.trim() || "Instagram",
+    campaign_type: input?.campaignType ?? "paid",
     budget_min: input?.budgetMin ?? 0,
     budget_max: input?.budgetMax ?? 0,
     min_followers: input?.minFollowers ?? 0,
@@ -449,6 +452,7 @@ export const updateBrandCampaign = async (brandId: string, campaignId: string, i
     description: input.description.trim(),
     category: input.category.trim() || "General",
     platform: input.platform.trim() || "Instagram",
+    campaign_type: input.campaignType,
     budget_min: input.budgetMin,
     budget_max: input.budgetMax,
     min_followers: input.minFollowers,
@@ -474,7 +478,7 @@ export const fetchBrandCampaignDetails = async (brandId: string, campaignId: str
 
   const { data: rows, error } = await supabase
     .from("campaigns")
-    .select("id, title, description, category, platform, budget_min, budget_max, min_followers, deadline, status, priority_chillies_cost, total_bids, deliverables")
+    .select("id, title, description, category, platform, campaign_type, budget_min, budget_max, min_followers, deadline, status, priority_chillies_cost, total_bids, deliverables")
     .eq("id", campaignId)
     .eq("brand_id", brandId)
     .limit(1);
@@ -492,6 +496,7 @@ export const fetchBrandCampaignDetails = async (brandId: string, campaignId: str
     description: data.description ?? "",
     category: data.category ?? "General",
     platform: data.platform ?? "Any",
+    campaignType: (data.campaign_type as "barter" | "paid" | "affiliate") ?? "paid",
     budgetMin: data.budget_min,
     budgetMax: data.budget_max,
     minFollowers: data.min_followers,
@@ -781,7 +786,7 @@ export const fetchDiscoverCreators = async (): Promise<DiscoverCreator[]> => {
 
   const { data: profiles, error: profileError } = await supabase
     .from("profiles")
-    .select("id, full_name, is_verified, rack_score, chillies_balance, role")
+    .select("id, full_name, email, is_verified, rack_score, chillies_balance, role")
     .eq("role", "creator");
   if (profileError) throw profileError;
 
@@ -811,7 +816,7 @@ export const fetchDiscoverCreators = async (): Promise<DiscoverCreator[]> => {
 
     return {
       id: p.id,
-      name: p.full_name,
+      name: p.full_name?.trim() || p.email?.split("@")[0]?.trim() || "Creator",
       niche: cp?.niche ?? "General",
       followers: `${Math.max(0, Math.round((cp?.combined_audience ?? 0) / 1000))}K`,
       engagement: `${Number(cp?.engagement_rate ?? 0).toFixed(1)}%`,
@@ -1025,7 +1030,7 @@ export const fetchBrandCommunityDirectory = async (brandId: string): Promise<Bra
     fetchBrandCommunityRelations(brandId),
     supabase
       .from("profiles")
-      .select("id, full_name, is_verified")
+      .select("id, full_name, email, is_verified")
       .eq("role", "brand")
       .neq("id", brandId)
       .order("full_name", { ascending: true }),
@@ -1062,7 +1067,7 @@ export const fetchBrandCommunityDirectory = async (brandId: string): Promise<Bra
 
     return {
       id: profile.id,
-      name: brandDetails?.company_name || profile.full_name,
+      name: brandDetails?.company_name?.trim() || profile.full_name?.trim() || profile.email?.split("@")[0]?.trim() || "Brand",
       isVerified: Boolean(profile.is_verified),
       headline: brandDetails?.industry || "Brand",
       location: brandDetails?.location || "Location not set",

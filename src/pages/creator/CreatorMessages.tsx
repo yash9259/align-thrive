@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import CreatorSidebar from "@/components/layout/CreatorSidebar";
 import { Input } from "@/components/ui/input";
@@ -8,8 +9,9 @@ import { Send, Search, ArrowLeft, Phone, Video, PhoneOff, MicOff, VideoOff, Pape
 import { useToast } from "@/hooks/use-toast";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { getCurrentCreatorContext } from "@/lib/creator-api";
+import { createNotification } from "@/lib/notifications";
 
-const defaultConversations: Array<{ name: string; participantId: string; last: string; time: string; unread: number }> = [];
+const defaultConversations: Array<{ name: string; participantId: string; role?: string; last: string; time: string; unread: number }> = [];
 const CALL_SYSTEM_PREFIX = "__SYS_CALL__";
 const SIGNAL_PREFIX = "__SYS_SIGNAL__";
 const STUN_CONFIG: RTCConfiguration = {
@@ -85,6 +87,7 @@ const CreatorMessages = () => {
   const connectedAtRef = useRef<number | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [activeCall, setActiveCall] = useState<{ room: string; kind: "audio" | "video" } | null>(null);
+  const navigate = useNavigate();
   const [incomingCall, setIncomingCall] = useState<{ room: string; kind: "audio" | "video"; callerName: string; offer?: RTCSessionDescriptionInit } | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(false);
@@ -119,6 +122,15 @@ const CreatorMessages = () => {
   };
 
   const makeTempId = () => `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  const openProfile = (participantId: string, role?: string) => {
+    if (!participantId) return;
+    if (role === "brand") {
+      navigate(`/brand/profile/${participantId}`);
+      return;
+    }
+    navigate(`/brand/creators/${participantId}`);
+  };
 
   const sendSignalToDb = async (content: string, metadata?: Record<string, string>) => {
     if (!currentUserId || !selectedParticipant.participantId) return;
@@ -263,21 +275,23 @@ const CreatorMessages = () => {
 
         const { data: profileRows, error: profileError } = await supabase
           .from("profiles")
-          .select("id, full_name")
+          .select("id, full_name, role")
           .in("id", Array.from(counterpartIds));
         if (profileError) throw profileError;
 
-        const profileMap = new Map((profileRows ?? []).map((profile) => [profile.id, profile.full_name]));
-        const conversationMap = new Map<string, { name: string; participantId: string; last: string; time: string; unread: number }>();
+        const profileMap = new Map((profileRows ?? []).map((profile) => [profile.id, { full_name: profile.full_name, role: profile.role }]));
+        const conversationMap = new Map<string, { name: string; participantId: string; role?: string; last: string; time: string; unread: number }>();
 
         (messages ?? []).forEach((message) => {
           if (message.content.startsWith(SIGNAL_PREFIX)) return;
           const participantId = message.sender_id === context.userId ? message.receiver_id : message.sender_id;
           if (conversationMap.has(participantId)) return;
 
+          const profile = profileMap.get(participantId);
           conversationMap.set(participantId, {
-            name: profileMap.get(participantId) ?? "Brand",
+            name: profile?.full_name ?? "Brand",
             participantId,
+            role: profile?.role,
             last: formatConversationPreview(message.content),
             time: new Date(message.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             unread: 0,
@@ -472,6 +486,21 @@ const CreatorMessages = () => {
       toast({ title: "Unable to send", description: error.message, variant: "destructive" });
       return false;
     }
+
+    const { data: recipientProfile } = await supabase
+      .from("profiles")
+      .select("email")
+      .eq("id", selectedParticipant.participantId)
+      .maybeSingle();
+
+    await createNotification({
+      userId: selectedParticipant.participantId,
+      type: "message",
+      title: `New message from ${currentUserName}`,
+      body: `You received a new message from ${currentUserName}.`,
+      email: recipientProfile?.email || undefined,
+      data: { sender_id: currentUserId, receiver_id: selectedParticipant.participantId },
+    });
 
     return true;
   };
@@ -924,7 +953,16 @@ const CreatorMessages = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="truncate text-sm font-medium">{conversation.name}</span>
+                    <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      openProfile(conversation.participantId, conversation.role);
+                    }}
+                    className="truncate text-left text-sm font-medium text-foreground hover:text-primary hover:underline"
+                  >
+                    {conversation.name}
+                  </button>
                     <span className="ml-2 shrink-0 text-[10px] text-muted-foreground">{conversation.time}</span>
                   </div>
                   <p className="truncate text-xs text-muted-foreground">{conversation.last || "No recent message"}</p>
@@ -951,7 +989,16 @@ const CreatorMessages = () => {
                     {selectedParticipant.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{selectedParticipant.name}</p>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        openProfile(selectedParticipant.participantId, selectedParticipant.role);
+                      }}
+                      className="truncate text-left text-sm font-medium text-foreground hover:text-primary hover:underline"
+                    >
+                      {selectedParticipant.name}
+                    </button>
                     <p className="text-xs text-success">Online</p>
                   </div>
                 </div>
