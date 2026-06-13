@@ -276,7 +276,7 @@ const Register = () => {
         return;
       }
 
-      if (data.user && data.session) {
+      if (data.user) {
         await createCreatorProfile(data.user.id);
         toast({ title: "Creator account created!", description: "Welcome to Align." });
         navigate("/creator");
@@ -329,7 +329,7 @@ const Register = () => {
         return;
       }
 
-      if (data.user && data.session) {
+      if (data.user) {
         await createBrandProfile(data.user.id);
         toast({ title: "Brand account created!", description: "Welcome to Align." });
         navigate("/brand");
