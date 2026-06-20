@@ -24,7 +24,7 @@ const Contact = () => (
             <div className="flex items-start gap-3">
               <User className="mt-0.5 h-5 w-5 text-primary" />
               <div>
-                <p className="font-semibold">Umesh Kamalkishor Agrawal</p>
+                <p className="font-semibold">Kesar Agrawal </p>
               </div>
             </div>
 
@@ -33,7 +33,7 @@ const Contact = () => (
               <div>
                 <p className="font-medium">Contact</p>
                 <a href="tel:+918767994438" className="text-muted-foreground hover:text-foreground">
-                  +91 87679 94438
+                  +91 9422189911
                 </a>
               </div>
             </div>
