@@ -2,7 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -53,7 +55,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <HashRouter>
+        <Suspense fallback={<PageSkeleton />}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
@@ -96,10 +99,23 @@ const App = () => (
           <Route path="/admin/communication" element={<AdminRoute><AdminCommunication /></AdminRoute>} />
           <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
           <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+</Routes>
+        </Suspense>
+      </HashRouter>
     </TooltipProvider>
   </QueryClientProvider>
+);
+
+const PageSkeleton = () => (
+  <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="flex flex-col items-center gap-4">
+      <div className="relative h-12 w-12">
+        <div className="absolute inset-0 rounded-full border-4 border-muted" />
+        <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+      </div>
+      <p className="text-sm text-muted-foreground animate-pulse">Loading...</p>
+    </div>
+  </div>
 );
 
 export default App;
