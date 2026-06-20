@@ -23,17 +23,17 @@ const PublicFooter = () => (
         <div>
           <h4 className="mb-3 text-sm font-semibold">Resources</h4>
           <div className="flex flex-col gap-2">
-            <span className="text-sm text-muted-foreground">Help Center</span>
-            <span className="text-sm text-muted-foreground">Blog</span>
-            <span className="text-sm text-muted-foreground">API Docs</span>
+            <Link to="/help" className="text-sm text-muted-foreground hover:text-foreground">Help Center</Link>
+            <Link to="/blog" className="text-sm text-muted-foreground hover:text-foreground">Blog</Link>
+            <Link to="/api-docs" className="text-sm text-muted-foreground hover:text-foreground">API Docs</Link>
           </div>
         </div>
         <div>
           <h4 className="mb-3 text-sm font-semibold">Legal</h4>
           <div className="flex flex-col gap-2">
-            <span className="text-sm text-muted-foreground">Privacy Policy</span>
-            <span className="text-sm text-muted-foreground">Terms of Service</span>
-            <span className="text-sm text-muted-foreground">Cookie Policy</span>
+            <Link to="/privacy-policy" className="text-sm text-muted-foreground hover:text-foreground">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="text-sm text-muted-foreground hover:text-foreground">Terms of Service</Link>
+            <Link to="/cookie-policy" className="text-sm text-muted-foreground hover:text-foreground">Cookie Policy</Link>
           </div>
         </div>
       </div>

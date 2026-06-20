@@ -61,22 +61,33 @@ const About = () => (
     </section>
 
     <section className="py-16 bg-secondary/30">
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="mb-8 text-3xl font-bold">Platform Stats</h2>
-        <div className="grid gap-6 md:grid-cols-4 max-w-4xl mx-auto">
-          {[
-            { label: "Active Creators", value: "12,500+" },
-            { label: "Brands", value: "3,200+" },
-            { label: "Campaigns Completed", value: "8,400+" },
-            { label: "Chillies Distributed", value: "2.1M+" },
-          ].map((s) => (
-            <Card key={s.label}>
-              <CardContent className="p-6 text-center">
-                <p className="text-3xl font-extrabold gradient-text">{s.value}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
-              </CardContent>
-            </Card>
-          ))}
+      <div className="container mx-auto px-4">
+        <h2 className="mb-8 text-center text-3xl font-bold">Our Mission in Action</h2>
+        <div className="max-w-4xl mx-auto">
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                title: "Merit-Based Matching",
+                desc: "Our platform connects brands with creators based on genuine fit — not follower counts. RACK scores reflect real reliability, activity, content quality, and knowledge.",
+              },
+              {
+                title: "Zero-Barrier Access",
+                desc: "Every creator can apply to any campaign for free. Chillies only boost visibility — they never block anyone from applying or being considered.",
+              },
+              {
+                title: "Transparent Growth",
+                desc: "Brands see verified creator metrics. Creators build real reputations. Both sides grow together through clear expectations and honest collaboration.",
+              },
+            ].map((item) => (
+              <Card key={item.title}>
+                <CardContent className="p-6">
+                  <Zap className="h-8 w-8 text-primary mb-3" />
+                  <h3 className="font-semibold mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </section>

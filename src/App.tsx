@@ -8,6 +8,12 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
+import Help from "./pages/Help";
+import Blog from "./pages/Blog";
+import ApiDocs from "./pages/ApiDocs";
 import BrandDashboard from "./pages/brand/BrandDashboard";
 import BrandCampaigns from "./pages/brand/BrandCampaigns";
 import BrandCampaignDetails from "./pages/brand/BrandCampaignDetails";
@@ -50,10 +56,16 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* About is now a section on the homepage */}
+          <Route path="/about" element={<About />} />
           <Route path="/contact-us" element={<Contact />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/api-docs" element={<ApiDocs />} />
           <Route path="/brand" element={<BrandDashboard />} />
           <Route path="/brand/campaigns" element={<BrandCampaigns />} />
           <Route path="/brand/campaigns/:id" element={<BrandCampaignDetails />} />
