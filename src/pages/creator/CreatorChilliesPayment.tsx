@@ -31,6 +31,8 @@ const CreatorChilliesPayment = () => {
   const [processing, setProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [creatorId, setCreatorId] = useState("");
+  const [creatorEmail, setCreatorEmail] = useState("");
+  const [creatorName, setCreatorName] = useState("");
   const [userInitials, setUserInitials] = useState("CR");
 
   useEffect(() => {
@@ -39,6 +41,8 @@ const CreatorChilliesPayment = () => {
       if (!ctx) return;
       setCreatorId(ctx.userId);
       setUserInitials(ctx.initials);
+      setCreatorEmail(ctx.email || "");
+      setCreatorName(ctx.fullName || "");
     };
     load();
   }, []);
@@ -54,7 +58,21 @@ const CreatorChilliesPayment = () => {
     return cleaned;
   };
 
-  const handlePayment = () => {
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if ((window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayment = async () => {
     if (paymentMethod === "card" && (!cardName || !cardNumber || !expiry || !cvv)) {
       toast({ title: "Missing fields", description: "Please fill all card details.", variant: "destructive" });
       return;
@@ -67,24 +85,127 @@ const CreatorChilliesPayment = () => {
       toast({ title: "Missing email", description: "Please enter your PayPal email.", variant: "destructive" });
       return;
     }
+
     setProcessing(true);
-    setTimeout(async () => {
+
+    if (paymentMethod === "card" || paymentMethod === "upi") {
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        toast({ title: "SDK Load Failure", description: "Unable to load Razorpay payment client. Please check your internet connection.", variant: "destructive" });
+        setProcessing(false);
+        return;
+      }
+
+      const keyId = (import.meta.env as any).VITE_RAZORPAY_KEY_ID;
+      if (!keyId) {
+        toast({ title: "Configuration Error", description: "Razorpay Key ID is not configured.", variant: "destructive" });
+        setProcessing(false);
+        return;
+      }
+
+      const isINR = price.includes("₹");
+      const numericPrice = parseFloat(price.replace(/[^0-9.]/g, "")) || 3.0;
+      
+      let conversionRate = 85; // Default fallback rate
+      if (!isINR) {
+        try {
+          const response = await fetch("https://open.er-api.com/v6/latest/USD");
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.rates && typeof data.rates.INR === "number") {
+              conversionRate = data.rates.INR;
+              console.log("Fetched real-time exchange rate:", conversionRate);
+            }
+          }
+        } catch (fetchErr) {
+          console.error("Failed to fetch real-time exchange rate, falling back to 85:", fetchErr);
+        }
+      } else {
+        conversionRate = 1;
+      }
+
+      const amountInINR = numericPrice * conversionRate;
+      const amountInPaise = Math.round(amountInINR * 100);
+
+      const options = {
+        key: keyId,
+        amount: amountInPaise,
+        currency: "INR",
+        name: "AlignThrive",
+        description: `Purchase of ${chillies} Chillies`,
+        prefill: {
+          name: creatorName,
+          email: creatorEmail,
+          contact: ""
+        },
+        theme: {
+          color: "#8B5CF6"
+        },
+        handler: async function (response: any) {
+          try {
+            await purchaseCreatorChillies(
+              creatorId,
+              Number(chillies),
+              price,
+              badge,
+              paymentMethod as "card" | "upi" | "paypal" | "bank",
+              response.razorpay_payment_id
+            );
+            toast({ title: "Payment Successful! 🎉", description: `${chillies} Chillies have been added to your account.` });
+            navigate("/creator/buy-chillies");
+          } catch (err: any) {
+            console.error("Payment registration failure details:", err);
+            const errorMsg = [
+              err?.message || "Unknown error",
+              err?.details ? `Details: ${err.details}` : "",
+              err?.hint ? `Hint: ${err.hint}` : "",
+              err?.code ? `Code: ${err.code}` : ""
+            ].filter(Boolean).join(" | ");
+            
+            toast({ 
+              title: "Record Update Failed", 
+              description: errorMsg,
+              variant: "destructive" 
+            });
+          } finally {
+            setProcessing(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setProcessing(false);
+            toast({ title: "Payment Cancelled", description: "You closed the payment gateway." });
+          }
+        }
+      };
+
       try {
-        await purchaseCreatorChillies(
-          creatorId,
-          Number(chillies),
-          price,
-          badge,
-          paymentMethod as "card" | "upi" | "paypal" | "bank"
-        );
-        toast({ title: "Payment Successful! 🎉", description: `${chillies} Chillies have been added to your account.` });
-        navigate("/creator/buy-chillies");
-      } catch {
-        toast({ title: "Payment Failed", description: "Could not process payment. Please try again.", variant: "destructive" });
-      } finally {
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
+      } catch (err) {
+        toast({ title: "Payment Initialization Failed", description: "Error creating Razorpay checkout instance.", variant: "destructive" });
         setProcessing(false);
       }
-    }, 2000);
+    } else {
+      // Paypal / Bank Transfer mock flows
+      setTimeout(async () => {
+        try {
+          await purchaseCreatorChillies(
+            creatorId,
+            Number(chillies),
+            price,
+            badge,
+            paymentMethod as "card" | "upi" | "paypal" | "bank"
+          );
+          toast({ title: "Payment Successful! 🎉", description: `${chillies} Chillies have been added to your account.` });
+          navigate("/creator/buy-chillies");
+        } catch {
+          toast({ title: "Payment Failed", description: "Could not process payment. Please try again.", variant: "destructive" });
+        } finally {
+          setProcessing(false);
+        }
+      }, 2000);
+    }
   };
 
   return (

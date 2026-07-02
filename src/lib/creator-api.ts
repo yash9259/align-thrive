@@ -1237,15 +1237,20 @@ export const purchaseCreatorChillies = async (
   price: string,
   badge: string,
   method: "card" | "upi" | "paypal" | "bank",
+  paymentReference?: string,
 ): Promise<void> => {
   if (!supabase) throw new Error("Supabase is not configured.");
+
+  const refType = paymentReference
+    ? `purchase:${method}:${price}:${encodeURIComponent(badge)}:${paymentReference}`
+    : `purchase:${method}:${price}:${encodeURIComponent(badge)}`;
 
   const { error: walletError } = await supabase.from("wallet_transactions").insert({
     user_id: creatorId,
     direction: "credit",
     amount: chillies,
     reason: "Chillies purchase",
-    ref_type: `purchase:${method}:${price}:${encodeURIComponent(badge)}`,
+    ref_type: refType,
   });
 
   if (walletError) throw walletError;

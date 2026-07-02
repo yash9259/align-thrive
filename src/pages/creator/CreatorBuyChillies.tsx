@@ -5,10 +5,11 @@ import CreatorSidebar from "@/components/layout/CreatorSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Flame, CheckCircle, Shield, Zap } from "lucide-react";
+import { Flame, CheckCircle, Shield, Zap, History } from "lucide-react";
 import { getCurrentCreatorContext } from "@/lib/creator-api";
 
 const packages = [
+  { chillies: 10, price: "₹1", badge: "1 day test", popular: false },
   { chillies: 10, price: "$3", badge: "1 week", popular: false },
   { chillies: 50, price: "$8", badge: "15 days", popular: false },
   { chillies: 100, price: "$10", badge: "30 days", popular: true },
@@ -42,9 +43,19 @@ const CreatorBuyChillies = () => {
         <Badge className="mb-4 bg-accent/10 text-accent border-accent/20 hover:bg-accent/10">🌶️ Chillies Store</Badge>
         <h2 className="text-2xl sm:text-3xl font-bold mb-2">Boost Your Priority</h2>
         <p className="text-muted-foreground">Buy Chillies to get verified badges, priority placement, and higher chances of landing campaigns.</p>
-        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2">
-          <Flame className="h-4 w-4 text-accent" />
-          <span className="text-sm font-medium">Your Balance: <span className="text-accent font-bold">{chilliesBalance !== null ? `${chilliesBalance} Chillies` : "Loading..."}</span></span>
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2">
+            <Flame className="h-4 w-4 text-accent" />
+            <span className="text-sm font-medium">Your Balance: <span className="text-accent font-bold">{chilliesBalance !== null ? `${chilliesBalance} Chillies` : "Loading..."}</span></span>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate("/creator/payment-history")}
+            className="rounded-full gap-2 border-accent/20 text-accent hover:bg-accent/10 hover:text-accent"
+          >
+            <History className="h-4 w-4" /> View Transaction History
+          </Button>
         </div>
       </div>
 

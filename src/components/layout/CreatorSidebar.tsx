@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FolderOpen, Flame, MessageSquare, User, Upload, LogOut, MailOpen, History, Users, Building2, Wallet } from "lucide-react";
+import { LayoutDashboard, FolderOpen, Flame, MessageSquare, User, Upload, LogOut, MailOpen, History, Users, Building2, Wallet, Shield } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
@@ -72,7 +72,10 @@ const CreatorSidebar = () => {
         {!collapsed && (
           <div className="mx-3 mt-3 rounded-lg bg-accent/10 p-3">
             <p className="text-xs font-medium text-accent">Creator Account</p>
-            <p className="text-sm font-semibold truncate">{sidebarLabel}</p>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <p className="text-sm font-semibold truncate">{sidebarLabel}</p>
+              {isVerified && <Shield className="h-3.5 w-3.5 text-success fill-success/15 shrink-0" />}
+            </div>
             <p className="mt-1 flex items-center gap-1 text-xs text-accent">
               <Flame className="h-3 w-3" /> {chilliesBalance} Chillies
             </p>

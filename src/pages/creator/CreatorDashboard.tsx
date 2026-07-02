@@ -87,7 +87,7 @@ const CreatorDashboard = () => {
                 <Shield className="h-5 w-5 text-success" />
                 <Badge className="bg-success/10 text-success text-[10px]">{dashboard.badgeStatus}</Badge>
               </div>
-              <p className="text-base font-bold sm:text-lg">{dashboard.isVerified ? "Verified ?" : "Not verified"}</p>
+              <p className="text-base font-bold sm:text-lg">{dashboard.isVerified ? "Verified ✓" : "Not verified"}</p>
               <p className="text-xs text-muted-foreground">Buy Chillies or complete reviews to improve visibility.</p>
             </CardContent>
           </Card>

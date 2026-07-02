@@ -195,7 +195,7 @@ const CreatorProfile = () => {
             <div className="flex flex-col items-start gap-4 sm:flex-row sm:gap-6">
               <div className="relative shrink-0">
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl gradient-primary text-xl font-bold text-primary-foreground sm:h-20 sm:w-20 sm:text-2xl">{userInitials}</div>
-                {profile.isVerified && <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-success text-xs text-success-foreground sm:h-6 sm:w-6">?</div>}
+                {profile.isVerified && <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-success text-xs text-success-foreground sm:h-6 sm:w-6">✓</div>}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
